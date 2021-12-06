@@ -9,10 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day04", "Day04\Day04.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day05", "Day05\Day05.csproj", "{6968C321-CDF4-4469-B744-64D60686E90E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day06", "Day06\Day06.csproj", "{A5E338DB-A923-4444-8C9F-874D0457F517}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{22cd4fd4-e3ca-473e-999b-6f8889eab101}*SharedItemsImports = 13
 		Common\Common.projitems*{6968c321-cdf4-4469-b744-64d60686e90e}*SharedItemsImports = 5
+		Common\Common.projitems*{a5e338db-a923-4444-8c9f-874d0457f517}*SharedItemsImports = 5
 		Common\Common.projitems*{f00c241b-96fd-45aa-957e-972d42dc67ed}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,6 +31,10 @@ Global
 		{6968C321-CDF4-4469-B744-64D60686E90E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6968C321-CDF4-4469-B744-64D60686E90E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6968C321-CDF4-4469-B744-64D60686E90E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5E338DB-A923-4444-8C9F-874D0457F517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5E338DB-A923-4444-8C9F-874D0457F517}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5E338DB-A923-4444-8C9F-874D0457F517}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5E338DB-A923-4444-8C9F-874D0457F517}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
