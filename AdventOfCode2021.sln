@@ -21,6 +21,7 @@ Global
 		Common\Common.projitems*{6968c321-cdf4-4469-b744-64d60686e90e}*SharedItemsImports = 5
 		Common\Common.projitems*{a5e338db-a923-4444-8c9f-874d0457f517}*SharedItemsImports = 5
 		Common\Common.projitems*{f00c241b-96fd-45aa-957e-972d42dc67ed}*SharedItemsImports = 5
+		Common\Common.projitems*{faae3cd5-2b29-4108-8996-6e77aead9f88}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
