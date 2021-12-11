@@ -10,31 +10,39 @@ Func<Point, IEnumerable<Point>> neighbours = (pos) => directions.Select(d => d +
 
 int flashes = 0;
 int time = 0;
-for (time = 0; flashes != 100; time++)
+int flashesThisTime = 0;
+while (flashesThisTime != 100 || time < 100)
 {
-    flashes = 0;
-    var newOctopi = octopi.Select(kv => new KeyValuePair<Point, int>(kv.Key, kv.Value + 1)).ToDictionary();
+    flashesThisTime = 0;
+    octopi = octopi.Select(kv => new KeyValuePair<Point, int>(kv.Key, kv.Value + 1)).ToDictionary();
     bool found = false;
     do
     {
         found = false;
-        var flashing = newOctopi.SkipWhile(kv => kv.Value <= 9);
+        var flashing = octopi.SkipWhile(kv => kv.Value <= 9);
         if (flashing.Any())
         {
             var firstFlashing = flashing.First();
-            newOctopi[firstFlashing.Key] = 0;
-            flashes++;
+            octopi[firstFlashing.Key] = 0;
+            flashesThisTime++;
             found = true;
             foreach (var pos in neighbours(firstFlashing.Key))
             {
-                if (newOctopi.ContainsKey(pos) && newOctopi[pos] > 0) newOctopi[pos]++;
+                if (octopi.ContainsKey(pos) && octopi[pos] > 0) octopi[pos]++;
             }
         }
     } while (found);
-    octopi = newOctopi;
+    time++;
+    flashes += flashesThisTime;
+    if (time == 100)
+    {
+        Console.WriteLine($"There are {flashes} individual flashes in the first 100 time steps");
+    }
+    if (flashesThisTime == 100)
+    {
+        Console.WriteLine($"All octopi flash together at time {time}");
+    }
 }
-
-Console.WriteLine(time);
 
 public record Point(int x, int y)
 {
