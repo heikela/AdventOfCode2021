@@ -15,23 +15,20 @@ while (flashesThisTime != 100 || time < 100)
 {
     flashesThisTime = 0;
     octopi = octopi.Select(kv => new KeyValuePair<Point, int>(kv.Key, kv.Value + 1)).ToDictionary();
-    bool found = false;
-    do
+    var flashingPositions = octopi.Where(kv => kv.Value > 9).Select(kv => kv.Key);
+    while (flashingPositions.Any())
     {
-        found = false;
-        var flashing = octopi.SkipWhile(kv => kv.Value <= 9);
-        if (flashing.Any())
+        foreach (var flashPos in flashingPositions)
         {
-            var firstFlashing = flashing.First();
-            octopi[firstFlashing.Key] = 0;
+            octopi[flashPos] = 0;
             flashesThisTime++;
-            found = true;
-            foreach (var pos in neighbours(firstFlashing.Key))
+            foreach (var pos in neighbours(flashPos))
             {
                 if (octopi.ContainsKey(pos) && octopi[pos] > 0) octopi[pos]++;
             }
         }
-    } while (found);
+        flashingPositions = octopi.Where(kv => kv.Value > 9).Select(kv => kv.Key);
+    }
     time++;
     flashes += flashesThisTime;
     if (time == 100)
