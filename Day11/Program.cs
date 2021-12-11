@@ -9,8 +9,10 @@ var directions = new[] { new Point(-1, 0), new Point(1, 0), new Point(0, -1), ne
 Func<Point, IEnumerable<Point>> neighbours = (pos) => directions.Select(d => d + pos);
 
 int flashes = 0;
-for (int time = 0; time < 100; time++)
+int time = 0;
+for (time = 0; flashes != 100; time++)
 {
+    flashes = 0;
     var newOctopi = octopi.Select(kv => new KeyValuePair<Point, int>(kv.Key, kv.Value + 1)).ToDictionary();
     bool found = false;
     do
@@ -32,8 +34,7 @@ for (int time = 0; time < 100; time++)
     octopi = newOctopi;
 }
 
-
-Console.WriteLine(flashes);
+Console.WriteLine(time);
 
 public record Point(int x, int y)
 {
