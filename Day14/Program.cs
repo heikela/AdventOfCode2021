@@ -7,32 +7,6 @@ var start = polymer;
 
 var substitutions = lines.Skip(2).Select(l => { var parts = l.Split(" -> ").ToArray(); return new KeyValuePair<String, String>(parts[0], parts[1]); }).ToDictionary();
 
-for (int step = 0; step < 10; ++step)
-{
-    polymer = polymer.Aggregate<Char, string>("", (prev, cur) =>
-    {
-        if (prev == "")
-        {
-            return prev + cur;
-        }
-        else
-        {
-            var pair = prev.Substring(prev.Length - 1) + cur;
-            if (substitutions.ContainsKey(pair))
-            {
-                return prev + substitutions[pair] + cur;
-            }
-            else
-            {
-                return prev + cur;
-            }
-        }
-    });
-}
-
-var charFrequencies = polymer.GroupBy(c => c).Select(g => new KeyValuePair<Char, long>(g.Key, g.Count())).ToDictionary();
-Console.WriteLine($"{charFrequencies.Values.Max() - charFrequencies.Values.Min()}");
-
 Dictionary<String, long> pairsCount = new Dictionary<String, long>();
 Dictionary<Char, long> charCount = new Dictionary<Char, long>();
 
@@ -63,6 +37,10 @@ static void AddToCount<T>(Dictionary<T, long> dict, T val, long count) {
 
 for (int step = 0; step < 40; ++step)
 {
+    if (step == 10)
+    {
+        Console.WriteLine($"{charCount.Values.Max() - charCount.Values.Min()}");
+    }
     var newPairsCount = new Dictionary<string, long>();
     foreach (var kv in pairsCount)
     {
