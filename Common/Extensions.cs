@@ -92,5 +92,17 @@ namespace Common
             return src.SelectMany(part => part);
         }
 
+        public static void AddOrSet<TKey, TVal>(this Dictionary<TKey, TVal> dict, TKey key, TVal val)
+        {
+            if (dict.ContainsKey(key))
+            {
+                dict[key] = val;
+            }
+            else
+            {
+                dict.Add(key, val);
+            }
+        }
     }
+
 }

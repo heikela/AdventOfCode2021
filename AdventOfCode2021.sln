@@ -13,24 +13,27 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day06", "Day06\Day06.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day07", "Day07\Day07.csproj", "{A7321719-755B-4B57-9031-5BC1502673F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day08", "Day08\Day08.csproj", "{FAAE3CD5-2B29-4108-8996-6E77AEAD9F88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day08", "Day08\Day08.csproj", "{FAAE3CD5-2B29-4108-8996-6E77AEAD9F88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day09", "Day09\Day09.csproj", "{107B5E01-9603-4E24-A0FA-F42255C186A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day09", "Day09\Day09.csproj", "{107B5E01-9603-4E24-A0FA-F42255C186A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day10", "Day10\Day10.csproj", "{E24124A8-3FF4-4357-B37F-FB67236796AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day10", "Day10\Day10.csproj", "{E24124A8-3FF4-4357-B37F-FB67236796AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day11", "Day11\Day11.csproj", "{BB55D30F-E6FE-4CE5-8D3F-893BD7073F78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day11", "Day11\Day11.csproj", "{BB55D30F-E6FE-4CE5-8D3F-893BD7073F78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day12", "Day12\Day12.csproj", "{80227013-C309-4781-9B1D-ED18EAFB2F7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day12", "Day12\Day12.csproj", "{80227013-C309-4781-9B1D-ED18EAFB2F7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day13", "Day13\Day13.csproj", "{BB52E0DD-0CAC-4B99-8E56-BE1DA321ACEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day13", "Day13\Day13.csproj", "{BB52E0DD-0CAC-4B99-8E56-BE1DA321ACEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day14", "Day14\Day14.csproj", "{BD8AB143-DE7D-4201-9F9A-72D845B7A6FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day14", "Day14\Day14.csproj", "{BD8AB143-DE7D-4201-9F9A-72D845B7A6FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day15", "Day15\Day15.csproj", "{30AA56EF-28BC-48AB-80B1-72F522705DEC}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{107b5e01-9603-4e24-a0fa-f42255c186a9}*SharedItemsImports = 5
 		Common\Common.projitems*{22cd4fd4-e3ca-473e-999b-6f8889eab101}*SharedItemsImports = 13
+		Common\Common.projitems*{30aa56ef-28bc-48ab-80b1-72f522705dec}*SharedItemsImports = 5
 		Common\Common.projitems*{6968c321-cdf4-4469-b744-64d60686e90e}*SharedItemsImports = 5
 		Common\Common.projitems*{80227013-c309-4781-9b1d-ed18eafb2f7d}*SharedItemsImports = 5
 		Common\Common.projitems*{a5e338db-a923-4444-8c9f-874d0457f517}*SharedItemsImports = 5
@@ -90,6 +93,10 @@ Global
 		{BD8AB143-DE7D-4201-9F9A-72D845B7A6FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD8AB143-DE7D-4201-9F9A-72D845B7A6FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD8AB143-DE7D-4201-9F9A-72D845B7A6FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30AA56EF-28BC-48AB-80B1-72F522705DEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30AA56EF-28BC-48AB-80B1-72F522705DEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30AA56EF-28BC-48AB-80B1-72F522705DEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30AA56EF-28BC-48AB-80B1-72F522705DEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
