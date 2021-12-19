@@ -103,6 +103,20 @@ namespace Common
                 dict.Add(key, val);
             }
         }
+
+        public static void AddToCount<T>(this Dictionary<T, int> dict, T val, int count)
+        {
+            if (dict.ContainsKey(val))
+            {
+                dict[val] += count;
+            }
+            else
+            {
+                dict.Add(val, count);
+            }
+        }
+
+
     }
 
 }
