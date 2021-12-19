@@ -132,6 +132,8 @@ while (scanners.Count() > 1)
 
 Console.WriteLine($"In total there are {scanners.Single().Points.Count()} beacons");
 
+Console.WriteLine($"Manhattan diameter of the scanner arrangement is {scanners.Single().MaxScannerSpan()}");
+
 public record Point(int x, int y, int z)
 {
     public static Point operator +(Point a, Point b) => new Point(a.x + b.x, a.y + b.y, a.z + b.z);
@@ -236,6 +238,7 @@ public class Scanner
 {
     public HashSet<Point> Points;
     public Dictionary<Point, List<(Point a, Point b)>> PointsByRelativeDistance;
+    public HashSet<Point> ScannerPositions;
 
     public Scanner(IEnumerable<string> lines)
     {
@@ -245,6 +248,7 @@ public class Scanner
             int[] parts = line.Split(",").Select(int.Parse).ToArray();
             Points.Add(new Point(parts[0], parts[1], parts[2]));
         }
+        ScannerPositions = new HashSet<Point>() { new Point(0, 0, 0) };
         OrganiseByRelativeDistances();
     }
 
@@ -344,9 +348,30 @@ public class Scanner
             {
                 Points.Add(point.rotate(goodRotation) + goodTranslation);
             }
+            foreach (var point in other.ScannerPositions)
+            {
+                ScannerPositions.Add(point.rotate(goodRotation) + goodTranslation);
+            }
             OrganiseByRelativeDistances();
         }
         return (true, this);
+    }
+
+    public int MaxScannerSpan()
+    {
+        int max = 0;
+
+        List<Point> scanners = ScannerPositions.ToList();
+
+        for (int i = 0; i < scanners.Count - 1; ++i)
+        {
+            for (int j = i + 1; j < scanners.Count; ++j)
+            {
+                int d = Math.Abs(scanners[i].x - scanners[j].x) + Math.Abs(scanners[i].y - scanners[j].y) + Math.Abs(scanners[i].z - scanners[j].z);
+                max = Math.Max(max, d);
+            }
+        }
+        return max;
     }
 }
 
