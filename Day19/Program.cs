@@ -3,8 +3,6 @@
 //var scanners = File.ReadLines("sampleInput19.txt").Paragraphs().Select(lines => new Scanner(lines)).ToList();
 var scanners = File.ReadLines("input19.txt").Paragraphs().Select(lines => new Scanner(lines)).ToList();
 
-Console.WriteLine(scanners.Count());
-
 while (scanners.Count() > 1)
 {
     for (int i = 0; i < scanners.Count - 1; ++i)
@@ -84,8 +82,6 @@ public record Rotation(int xx, int xy, int xz, int yx, int yy, int yz, int zx, i
         new Rotation(0, -1, 0, 0, 0, 1, -1, 0, 0)
     };
 }
-
-public record Transformation(Rotation rot, Point translation);
 
 public class Scanner
 {
@@ -169,7 +165,6 @@ public class Scanner
                 var translations = possibleTranslations.Where(kv => kv.Value >= 132);
                 foreach (var translation in translations)
                 {
-                    Console.WriteLine($"Possible match with rotation {rot}, translation {translation.Key} with {translation.Value} vectors matching");
                     if (goodTranslation != null)
                     {
                         throw new Exception("Found multiple different potentially good matches");
