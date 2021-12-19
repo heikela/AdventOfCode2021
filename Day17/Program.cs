@@ -1,17 +1,16 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿int xMin = 79;
+int xMax = 137;
+int yMin = -176;
+int yMax = -117;
 
-Point bottomLeft = new Point(79, -176);
-Point topRight = new Point(137, -117);
-
-Boolean withinTarget(Point pos)
+bool withinTarget(Point pos)
 {
-    return pos.x >= bottomLeft.x && pos.x <= topRight.x && pos.y >= bottomLeft.y && pos.y <= topRight.y;
+    return pos.x >= xMin && pos.x <= xMax && pos.y >= yMin && pos.y <= yMax;
 }
 
-Boolean pastTarget(Point pos)
+bool pastTarget(Point pos)
 {
-    return pos.y < -176 || pos.x > 137;
+    return pos.y < yMin|| pos.x > xMax;
 }
 
 Point friction = new Point(-1, 0);
@@ -40,9 +39,15 @@ IEnumerable<Point> trajectory(Point initialVel)
 int bestHeight = int.MinValue;
 int goodVelocities = 0;
 
-for (int x = 10; x < 138; ++x)
+for (int x = 1; x <= xMax; ++x) // No need to consider starting velocities that take to the right of target in one step
 {
-    for (int y = -176; y < 177; ++y)
+    if (x * (x + 1) / 2 < xMin)
+    {
+        continue; // Skip x values where we don't reach target area at all
+    }
+    // vertical speeds outside of this range take us beyond the target either in step 1, or the first step after
+    // gravity brings us back to 0 height (which it always does exactly).
+    for (int y = yMin; y <= -yMin; ++y)
     {
         IEnumerable<Point> relevantTrajectory = trajectory(new Point(x, y)).TakeWhile(pos => !pastTarget(pos));
         if (relevantTrajectory.Any(pos => withinTarget(pos))) {
