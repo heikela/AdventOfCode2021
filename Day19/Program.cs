@@ -186,50 +186,16 @@ public record Rotation(int xx, int xy, int xz, int yx, int yy, int yz, int zx, i
         new Rotation(0, 0, -1, 0, -1, 0, -1, 0, 0),
         new Rotation(0, 0, -1, -1, 0, 0, 0, 1, 0),
 
-        new Rotation(0, 1, 0, -1, 0, 0, 0, 0, -1),
-        new Rotation(0, 1, 0, 0, 0, -1, 1, 0, 0),
-        new Rotation(0, 1, 0, 1, 0, 0, 0, 0, 1),
-        new Rotation(0, 1, 0, 0, 0, 1, -1, 0, 0),
-
-        new Rotation(0, -1, 0, -1, 0, 0, 0, 0, 1),
-        new Rotation(0, -1, 0, 0, 0, -1, -1, 0, 0),
-        new Rotation(0, -1, 0, 1, 0, 0, 0, 0, -1),
-        new Rotation(0, -1, 0, 0, 0, 1, 1, 0, 0),
-
-
-
-        new Rotation(-1, 0, 0, 0, 1, 0, 0, 0, 1),
-        new Rotation(-1, 0, 0, 0, 0, 1, 0, -1, 0),
-        new Rotation(-1, 0, 0, 0, -1, 0, 0, 0, -1),
-        new Rotation(-1, 0, 0, 0, 0, -1, 0, 1, 0),
-
-        new Rotation(1, 0, 0, 0, 1, 0, 0, 0, -1),
-        new Rotation(1, 0, 0, 0, 0, 1, 0, 1, 0),
-        new Rotation(1, 0, 0, 0, -1, 0, 0, 0, 1),
-        new Rotation(1, 0, 0, 0, 0, -1, 0, -1, 0),
-
-        new Rotation(0, 0, -1, 0, 1, 0, -1, 0, 0),
-        new Rotation(0, 0, -1, 1, 0, 0, 0, 1, 0),
-        new Rotation(0, 0, -1, 0, -1, 0, 1, 0, 0),
-        new Rotation(0, 0, -1, -1, 0, 0, 0, -1, 0),
-
-        new Rotation(0, 0, 1, 0, 1, 0, 1, 0, 0),
-        new Rotation(0, 0, 1, 1, 0, 0, 0, -1, 0),
-        new Rotation(0, 0, 1, 0, -1, 0, -1, 0, 0),
-        new Rotation(0, 0, 1, -1, 0, 0, 0, 1, 0),
-
-        new Rotation(0, -1, 0, -1, 0, 0, 0, 0, -1),
-        new Rotation(0, -1, 0, 0, 0, -1, 1, 0, 0),
-        new Rotation(0, -1, 0, 1, 0, 0, 0, 0, 1),
-        new Rotation(0, -1, 0, 0, 0, 1, -1, 0, 0),
-
         new Rotation(0, 1, 0, -1, 0, 0, 0, 0, 1),
         new Rotation(0, 1, 0, 0, 0, -1, -1, 0, 0),
         new Rotation(0, 1, 0, 1, 0, 0, 0, 0, -1),
         new Rotation(0, 1, 0, 0, 0, 1, 1, 0, 0),
 
+        new Rotation(0, -1, 0, -1, 0, 0, 0, 0, -1),
+        new Rotation(0, -1, 0, 0, 0, -1, 1, 0, 0),
+        new Rotation(0, -1, 0, 1, 0, 0, 0, 0, 1),
+        new Rotation(0, -1, 0, 0, 0, 1, -1, 0, 0)
     };
-
 }
 
 public record Transformation(Rotation rot, Point translation);
