@@ -1,8 +1,8 @@
 ﻿using Common;
 
 
-//var inputFile = "sampleInput20.txt";
-var inputFile = "input20.txt";
+var inputFile = "sampleInput20.txt";
+//var inputFile = "input20.txt";
 
 var lines = File.ReadLines(inputFile).ToList();
 
@@ -66,8 +66,37 @@ void Print(Dictionary<Point, char> grid)
 }
 
 
-Console.WriteLine($"Twice enhanced, we have {Enhance(Enhance(grid),'1').Count(kv => kv.Value == '1')} lit pixels");
+var current = grid;
+bool alternatingBackground = enhancer[0] == '#';
 
+if (alternatingBackground && enhancer[511] != '.')
+{
+    throw new Exception("Enhancer turns the infinite background on and never off. All counts of lit pixels in enhanced images are infinite");
+}
+
+for (int i = 0; i < 50; ++i)
+{
+    char background;
+    if (alternatingBackground)
+    {
+        background = i % 2 != 0 ? '1' : '0';
+    }
+    else
+    {
+        background = '0';
+    }
+
+    if (i == 2)
+    {
+        Console.WriteLine($"Twice enhanced, we have {current.Count(kv => kv.Value == '1')} lit pixels");
+    }
+
+    current = Enhance(current, background);
+}
+
+Console.WriteLine($"50 times enhanced, we have {current.Count(kv => kv.Value == '1')} lit pixels");
+
+/*
 Print(grid);
 Console.WriteLine();
 Print(Enhance(grid));
@@ -75,7 +104,7 @@ Console.WriteLine();
 Print(Enhance(Enhance(grid),'1'));
 Console.WriteLine();
 
-// not 4924
+*/
 
 public record Point(int x, int y)
 {
