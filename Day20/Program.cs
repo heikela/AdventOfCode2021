@@ -1,8 +1,8 @@
 ﻿using Common;
 
 
-var inputFile = "sampleInput20.txt";
-//var inputFile = "input20.txt";
+//var inputFile = "sampleInput20.txt";
+var inputFile = "input20.txt";
 
 var lines = File.ReadLines(inputFile).ToList();
 
@@ -17,7 +17,7 @@ IEnumerable<Point> Neighbours(Point pos)
     return directions.Select(d => d + pos);
 }
 
-Dictionary<Point, char> Enhance(Dictionary<Point, char> image)
+Dictionary<Point, char> Enhance(Dictionary<Point, char> image, char background = '0')
 {
     int xMin = image.Keys.Min(p => p.x) - 1;
     int xMax = image.Keys.Max(p => p.x) + 1;
@@ -32,7 +32,7 @@ Dictionary<Point, char> Enhance(Dictionary<Point, char> image)
         {
             Point pos = new Point(x, y);
             var neighbours = Neighbours(pos);
-            var neighbourValues = neighbours.Select(p => image.GetOrElse(p, '0')).ToArray();
+            var neighbourValues = neighbours.Select(p => image.GetOrElse(p, background)).ToArray();
             int enhancerIndex = Convert.ToInt32(new String(neighbourValues), 2);
             char value = enhancer[enhancerIndex] == '#' ? '1' : '0';
             result.Add(pos, value);
@@ -41,7 +41,39 @@ Dictionary<Point, char> Enhance(Dictionary<Point, char> image)
     return result;
 }
 
-Console.WriteLine($"Twice enhanced, we have {Enhance(Enhance(grid)).Count(kv => kv.Value == '1')} lit pixels");
+void Print(Dictionary<Point, char> grid)
+{
+    int minY = grid.Keys.Min(p => p.y);
+    int maxY = grid.Keys.Max(p => p.y);
+    int minX = grid.Keys.Min(p => p.x);
+    int maxX = grid.Keys.Max(p => p.x);
+    for (int y = minY; y <= maxY; ++y)
+    {
+        for (int x = minX; x <= maxX; ++x)
+        {
+            Point pos = new Point(x, y);
+            if (grid.GetOrElse(pos, '0') == '1')
+            {
+                Console.Write('#');
+            }
+            else
+            {
+                Console.Write(' ');
+            }
+        }
+        Console.WriteLine();
+    }
+}
+
+
+Console.WriteLine($"Twice enhanced, we have {Enhance(Enhance(grid),'1').Count(kv => kv.Value == '1')} lit pixels");
+
+Print(grid);
+Console.WriteLine();
+Print(Enhance(grid));
+Console.WriteLine();
+Print(Enhance(Enhance(grid),'1'));
+Console.WriteLine();
 
 // not 4924
 
