@@ -37,7 +37,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day18", "Day18\Day18.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day19", "Day19\Day19.csproj", "{EC362A9D-C2D5-4C7A-906D-58302D58D17B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day20", "Day20\Day20.csproj", "{A381DBA1-09D4-4121-98CC-C2E714138066}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day20", "Day20\Day20.csproj", "{A381DBA1-09D4-4121-98CC-C2E714138066}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day21", "Day21\Day21.csproj", "{AAE39024-69EB-4917-B23D-34B49818A785}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -49,6 +51,7 @@ Global
 		Common\Common.projitems*{80227013-c309-4781-9b1d-ed18eafb2f7d}*SharedItemsImports = 5
 		Common\Common.projitems*{a381dba1-09d4-4121-98cc-c2e714138066}*SharedItemsImports = 5
 		Common\Common.projitems*{a5e338db-a923-4444-8c9f-874d0457f517}*SharedItemsImports = 5
+		Common\Common.projitems*{aae39024-69eb-4917-b23d-34b49818a785}*SharedItemsImports = 5
 		Common\Common.projitems*{bb52e0dd-0cac-4b99-8e56-be1da321acea}*SharedItemsImports = 5
 		Common\Common.projitems*{bb55d30f-e6fe-4ce5-8d3f-893bd7073f78}*SharedItemsImports = 5
 		Common\Common.projitems*{bd8ab143-de7d-4201-9f9a-72d845b7a6fc}*SharedItemsImports = 5
@@ -130,6 +133,10 @@ Global
 		{A381DBA1-09D4-4121-98CC-C2E714138066}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A381DBA1-09D4-4121-98CC-C2E714138066}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A381DBA1-09D4-4121-98CC-C2E714138066}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAE39024-69EB-4917-B23D-34B49818A785}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAE39024-69EB-4917-B23D-34B49818A785}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAE39024-69EB-4917-B23D-34B49818A785}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAE39024-69EB-4917-B23D-34B49818A785}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
