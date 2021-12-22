@@ -20,9 +20,6 @@ bool Part1Instruction(Instruction instruction)
 
 var instructions = lines.Select(parseLine);
 
-// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
-
 HashSet<Point> part1State = new HashSet<Point>();
 
 foreach (var instruction in instructions)
