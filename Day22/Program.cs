@@ -158,8 +158,6 @@ public record Rectangle(Point min, Point max)
     }
 }
 
-
-
 public record Instruction(bool on, Rectangle area);
 
 
