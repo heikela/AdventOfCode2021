@@ -1,4 +1,5 @@
 ﻿using Common;
+using System.Numerics;
 
 var lines = File.ReadLines("input22.txt");
 //var lines = File.ReadLines("sampleInput22b.txt");
@@ -119,7 +120,7 @@ List<int> xDivSorted = xDividers.OrderBy(x => x).ToList();
 List<int> yDivSorted = yDividers.OrderBy(x => x).ToList();
 List<int> zDivSorted = zDividers.OrderBy(x => x).ToList();
 
-long onCount = 0;
+BigInteger onCount = 0;
 
 for (int xi = 0; xi < xDivSorted.Count - 1; ++xi)
 {
@@ -130,7 +131,10 @@ for (int xi = 0; xi < xDivSorted.Count - 1; ++xi)
             Point pos = new Point(xDivSorted[xi], yDivSorted[yi], zDivSorted[zi]);
             if (rectanglesOn.Contains(pos))
             {
-                onCount += xDivSorted[xi + 1] - xDivSorted[xi] * yDivSorted[yi + 1] - yDivSorted[yi] * zDivSorted[zi + 1] - zDivSorted[zi];
+                long xSize = xDivSorted[xi + 1] - xDivSorted[xi];
+                long ySize = yDivSorted[yi + 1] - yDivSorted[yi];
+                long zSize = zDivSorted[zi + 1] - zDivSorted[zi];
+                onCount += xSize * ySize * zSize;
             }
         }
     }
