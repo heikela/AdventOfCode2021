@@ -2,7 +2,7 @@
 using System.Numerics;
 
 var lines = File.ReadLines("input22.txt");
-//var lines = File.ReadLines("sampleInput22b.txt");
+//var lines = File.ReadLines("sampleInput22c.txt");
 
 Instruction parseLine(string line)
 {
@@ -126,7 +126,7 @@ for (int xi = 0; xi < xDivSorted.Count - 1; ++xi)
 {
     for (int yi = 0; yi < yDivSorted.Count - 1; ++yi)
     {
-        for (int zi = 0; zi < xDivSorted.Count - 1; ++zi)
+        for (int zi = 0; zi < zDivSorted.Count - 1; ++zi)
         {
             Point pos = new Point(xDivSorted[xi], yDivSorted[yi], zDivSorted[zi]);
             if (rectanglesOn.Contains(pos))
