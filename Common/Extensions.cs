@@ -6,6 +6,27 @@ namespace Common
 {
     public static class Extensions
     {
+        public static IEnumerable<List<TElem>> Chunk<TElem>(this IEnumerable<TElem> seq, int n)
+        {
+            List<TElem> prefix = new List<TElem>();
+            int i = 0;
+            foreach (TElem e in seq)
+            {
+                prefix.Add(e);
+                i++;
+                if (i%n == 0)
+                {
+                    yield return prefix;
+                    prefix = new List<TElem>();
+                }
+            }
+            if (i % n != 0)
+            {
+                yield return prefix;
+            }
+            yield break;
+        }
+
         public static IEnumerable<List<TElem>> SplitWhen<TElem>(this IEnumerable<TElem> seq,
             Func<TElem, TElem, bool> splitPredicate)
         {
