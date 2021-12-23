@@ -10,7 +10,18 @@ namespace Day23
     {
         static void Main(string[] args)
         {
-            State startState = State.FromPositions(new List<string> ()
+            State sampleStart = State.FromPositions(new List<string>()
+            {
+                "BA1",
+                "CA2",
+                "CB1",
+                "DB2",
+                "BC1",
+                "CC2",
+                "DD1",
+                "AD2"
+            });
+            State startState = State.FromPositions(new List<string>()
             {
                 "AA1",
                 "BA2",
@@ -19,9 +30,28 @@ namespace Day23
                 "CC1",
                 "AC2",
                 "DD1",
-                "BD2"
+                "BD2",
             });
-            long cost = DijkstraFrom(startState);
+            State startState2 = State.FromPositions(new List<string>()
+            {
+                "AA1",
+                "BA4",
+                "CB1",
+                "DB4",
+                "CC1",
+                "AC4",
+                "DD1",
+                "BD4",
+                "DA2",
+                "DA3",
+                "CB2",
+                "BB3",
+                "BC2",
+                "AC3",
+                "AD2",
+                "CD3"
+            });
+            long cost = AStar(startState2);
             Console.WriteLine(cost);
         }
 
@@ -61,13 +91,88 @@ namespace Day23
             }
             return -1;
         }
+
+        static int AStar(State start)
+        {
+            HashSet<State> visited = new HashSet<State>();
+            IPriorityQueue<State, int> frontier = new SimplePriorityQueue<State, int>();
+
+            frontier.Enqueue(start, 0);
+            // Do we need to keep track of where we came from, perhaps not...
+            Dictionary<State, int> cost = new Dictionary<State, int>();
+            cost.Add(start, 0);
+
+            Dictionary<State, int> remainingCost = new Dictionary<State, int>();
+            remainingCost.Add(start, start.Heuristic());
+
+            Dictionary<State, int> costEstimate = new Dictionary<State, int>();
+            costEstimate.Add(start, cost[start] + remainingCost[start]);
+
+            while (frontier.Count > 0)
+            {
+                var current = frontier.Dequeue();
+                if (current.IsFinished())
+                {
+                    return costEstimate[current];
+                }
+                visited.Add(current);
+                foreach ((State neighbour, int neighbourCost) n in current.ValidMoves())
+                {
+                    if (!visited.Contains(n.neighbour))
+                    {
+                        int tentativeCost = cost[current] + n.neighbourCost;
+                        int newEstimate = tentativeCost + n.neighbour.Heuristic();
+                        if (!frontier.Contains(n.neighbour))
+                        {
+                            frontier.Enqueue(n.neighbour, newEstimate);
+                            cost.Add(n.neighbour, tentativeCost);
+                            costEstimate.Add(n.neighbour, newEstimate);
+                        }
+                        else if (tentativeCost < cost[n.neighbour])
+                        {
+                            cost[n.neighbour] = tentativeCost;
+                            costEstimate[n.neighbour] = newEstimate;
+                            frontier.UpdatePriority(n.neighbour, newEstimate);
+                        }
+                    }
+                }
+            }
+            return -1;
+        }
     }
 
     public record State(string normalisedState)
     {
+        int RoomSize()
+        {
+            return Positions().Count() / 4;
+        }
+
         List<string> Positions()
         {
             return normalisedState.Split(',').Select(arr => new string(arr.ToArray())).ToList();
+        }
+
+        public static int RoomPos(char type)
+        {
+            return ((int)(type - 'A')) * 2 + 3;
+        }
+
+        public static int CostPerStep(char type)
+        {
+            switch (type)
+            {
+                case 'A':
+                    return 1;
+                case 'B':
+                    return 10;
+                case 'C':
+                    return 100;
+                case 'D':
+                    return 1000;
+            }
+            throw new Exception("Unexpected type");
+
         }
 
         public static State FromPositions(List<string> poss)
@@ -93,6 +198,7 @@ namespace Day23
         public IEnumerable<(State next, int cost)> ValidMoves()
         {
             List<string> positions = Positions();
+            int roomSize = RoomSize();
             Dictionary<string, Char> occupied = new Dictionary<string, Char>();
             for (int i = 0; i < positions.Count(); ++i)
             {
@@ -108,48 +214,62 @@ namespace Day23
                 Char area = positions[i][1];
                 int posInArea = int.Parse(positions[i].Substring(2));
                 bool finished = false;
-                int costPerStep = 0;
+                int costPerStep = CostPerStep(type);
                 if (type == area)
                 {
-                    if (posInArea == 2)
+                    finished = true;
+                    for (int furtherPos = posInArea + 1; furtherPos <= roomSize; ++furtherPos)
                     {
-                        finished = true;
-                    }
-                    else if (occupied.GetOrElse(MakePosition(area, 2), ' ') == type)
-                    {
-                        finished = true;
+                        if (occupied.GetOrElse(MakePosition(type, furtherPos), 'X') != type)
+                        {
+                            finished = false;
+                        }
                     }
                 }
                 if (finished)
                 {
                     continue;
                 }
-                switch (type)
-                {
-                    case 'A':
-                        costPerStep = 1;
-                        break;
-                    case 'B':
-                        costPerStep = 10;
-                        break;
-                    case 'C':
-                        costPerStep = 100;
-                        break;
-                    case 'D':
-                        costPerStep = 1000;
-                        break;
-                }
                 if (area == 'H')
                 {
                     bool canMoveIn = true;
-                    string dest2 = MakePosition(type, 2);
-                    if (occupied.ContainsKey(dest2) && occupied[dest2] != type)
+                    int destPosInRoom = roomSize;
+                    bool resolved = false;
+                    do
                     {
-                        canMoveIn = false;
-                    }
-                    else if (occupied.ContainsKey(MakePosition(type, 1)))
+                        var potentialDest = MakePosition(type, destPosInRoom);
+                        if (occupied.ContainsKey(potentialDest))
+                        {
+                            if (occupied[potentialDest] != type)
+                            {
+                                resolved = true;
+                                canMoveIn = false;
+                            }
+                            else
+                            {
+                                destPosInRoom--;
+                                // There should be no need to stop looping based on index going outside of range due to the design of the problem.
+                            }
+                        }
+                        else
+                        {
+                            for (int earlierPos = 1; earlierPos < destPosInRoom; ++earlierPos)
+                            {
+                                if (occupied.ContainsKey(MakePosition(type, earlierPos)))
+                                {
+                                    resolved = true;
+                                    canMoveIn = false;
+                                }
+                            }
+                            if (canMoveIn)
+                            {
+                                resolved = true;
+                            }
+                        }
+                    } while (!resolved);
+                    if (!canMoveIn)
                     {
-                        canMoveIn = false;
+                        continue;
                     }
                     int destPos = ((int)(type - 'A')) * 2 + 3;
                     int dir = destPos > posInArea ? 1 : -1;
@@ -162,7 +282,6 @@ namespace Day23
                     }
                     if (canMoveIn)
                     {
-                        int destPosInRoom = occupied.ContainsKey(dest2) ? 1 : 2;
                         int dist = Math.Abs(posInArea - destPos) + destPosInRoom;
                         int cost = dist * costPerStep;
                         string newEntry = type.ToString() + MakePosition(type, destPosInRoom);
@@ -173,7 +292,16 @@ namespace Day23
                 }
                 else
                 {
-                    if (posInArea == 2 && occupied.ContainsKey(MakePosition(area, 1)))
+                    bool blocked = false;
+                    for (int earlierPos = 1; earlierPos < posInArea; ++earlierPos)
+                    {
+                        if (occupied.ContainsKey(MakePosition(area, earlierPos)))
+                        {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                    if (blocked)
                     {
                         continue;
                     }
@@ -194,6 +322,11 @@ namespace Day23
                     }
                     for (int destPos = minPosInHallway; destPos <= maxPosInHallway; ++destPos)
                     {
+                        if (destPos == 3 || destPos == 5 || destPos == 7 || destPos == 9)
+                        {
+                            // no stopping outside of the rooms
+                            continue;
+                        }
                         int dist = Math.Abs(currentRoomPos - destPos) + posInArea;
                         int cost = dist * costPerStep;
                         string newEntry = type.ToString() + MakePosition('H', destPos);
@@ -205,5 +338,57 @@ namespace Day23
             }
             yield break;
         }
-    };
+
+        public int Heuristic()
+        {
+            List<string> positions = Positions();
+            int roomSize = RoomSize();
+            Dictionary<string, Char> occupied = new Dictionary<string, Char>();
+            for (int i = 0; i < positions.Count(); ++i)
+            {
+                Char type = positions[i][0];
+                Char area = positions[i][1];
+                int posInArea = int.Parse(positions[i].Substring(2));
+                occupied.Add(MakePosition(area, posInArea), type);
+            }
+
+            int total = 0;
+            for (int i = 0; i < positions.Count(); ++i)
+            {
+                Char type = positions[i][0];
+                Char area = positions[i][1];
+                int posInArea = int.Parse(positions[i].Substring(2));
+                int costPerStep = CostPerStep(type);
+                if (type == area)
+                {
+                    bool finished = true;
+                    for (int laterPos = posInArea + 1; laterPos <= roomSize; ++laterPos)
+                    {
+                        if (occupied.GetOrElse(MakePosition(type, laterPos), 'X') != type)
+                        {
+                            finished = false;
+                        }
+                    }
+                    if (finished)
+                    {
+                        total += (roomSize - posInArea) * costPerStep;
+                    }
+                    else
+                    {
+                        total += (posInArea + roomSize + 2) * costPerStep;
+                    }
+                }
+                else if (area == 'H')
+                {
+                    total += (Math.Abs(RoomPos(type) - posInArea) + roomSize) * costPerStep;
+                }
+                else
+                {
+                    total += (Math.Abs(RoomPos(type) - RoomPos(area)) + roomSize + posInArea) * costPerStep;
+                }
+            }
+            return total - (roomSize * (roomSize - 1) / 2) * 1111;
+        }
+    }
+
 }
