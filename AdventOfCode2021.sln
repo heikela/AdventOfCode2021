@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day22", "Day22\Day22.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day23", "Day23\Day23.csproj", "{222084B0-77A3-4FA2-99EF-34000CC0B997}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day24", "Day24\Day24.csproj", "{B066DE4D-D517-45E6-A9F6-5BEAE6D2F39F}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{107b5e01-9603-4e24-a0fa-f42255c186a9}*SharedItemsImports = 5
@@ -150,6 +152,10 @@ Global
 		{222084B0-77A3-4FA2-99EF-34000CC0B997}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{222084B0-77A3-4FA2-99EF-34000CC0B997}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{222084B0-77A3-4FA2-99EF-34000CC0B997}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B066DE4D-D517-45E6-A9F6-5BEAE6D2F39F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B066DE4D-D517-45E6-A9F6-5BEAE6D2F39F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B066DE4D-D517-45E6-A9F6-5BEAE6D2F39F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B066DE4D-D517-45E6-A9F6-5BEAE6D2F39F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
