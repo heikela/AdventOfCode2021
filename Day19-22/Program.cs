@@ -160,7 +160,7 @@ int BlueprintQuality(Blueprint blueprint, int maxTime)
 
 int BlueprintQuality2(Blueprint blueprint, int maxTime)
 {
-    return MostGeodes2(blueprint, maxTime) * blueprint.number;
+    return MostGeodes3(blueprint, maxTime) * blueprint.number;
 }
 
 int MostGeodes2(Blueprint blueprint, int maxTime)
@@ -213,6 +213,48 @@ int MostGeodes2(Blueprint blueprint, int maxTime)
     return mostGeodes;
 }
 
+int MostGeodes3(Blueprint blueprint, int maxTime)
+{
+    int mostGeodes = 0;
+
+    int maxOreNeed = Math.Max(blueprint.orecost.ore, Math.Max(blueprint.claycost.ore, Math.Max(blueprint.obsidiancost.ore, blueprint.geodecost.ore)));
+    int maxClayNeed = blueprint.obsidiancost.clay;
+    int maxObsidianNeed = blueprint.geodecost.obsidian;
+
+    State start = new State(new Stock(1, 0, 0, 0), new Stock(0, 0, 0, 0), 0);
+
+    Dictionary<State, int> subSolutions = new Dictionary<State, int>();
+
+    int MostGeodes3Sub(State current)
+    {
+        if (current.time == maxTime)
+        {
+            return current.materials.geodes;
+        }
+        int maxGeodes = 0;
+        foreach (State next in PossibleSuccessors2(current, blueprint, maxTime))
+        {
+            int geodes = 0;
+            if (subSolutions.ContainsKey(next))
+            {
+                geodes = subSolutions[next];
+            }
+            else
+            {
+                geodes = MostGeodes3Sub(next);
+                subSolutions[next] = geodes;
+            }
+            if (geodes > maxGeodes)
+            {
+                maxGeodes = geodes;
+            }
+        }
+        return maxGeodes;
+    }
+
+    return MostGeodes3Sub(start);
+}
+
 int totalQualities = blueprints.Select(b => BlueprintQuality(b, 24)).Sum();
 
 Console.WriteLine($"Sum of qualities = {totalQualities}");
@@ -221,7 +263,7 @@ totalQualities = blueprints.Select(b => BlueprintQuality2(b, 24)).Sum();
 
 Console.WriteLine($"Sum of qualities = {totalQualities}");
 
-Console.WriteLine($"Part 2 = {blueprints.Take(3).Select(b => MostGeodes2(b, 33)).Aggregate((a, b) => a * b)}");
+Console.WriteLine($"Part 2 = {blueprints.Take(3).Select(b => MostGeodes3(b, 32)).Aggregate((a, b) => a * b)}");
 
 record Stock(int ore, int clay, int obsidian, int geodes)
 {
@@ -266,3 +308,4 @@ record State(Stock bots, Stock materials, int time)
 {
 
 }
+
