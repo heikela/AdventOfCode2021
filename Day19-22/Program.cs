@@ -3,42 +3,7 @@
 
 List<Blueprint> blueprints = input.Select(Blueprint.Parse).ToList();
 
-/*
-IEnumerable<State> PossibleSuccessors(State current, Blueprint blueprint)
-{
-    if (current.time == maxTime)
-    {
-        yield break;
-    }
-    Stock newMaterials = current.materials + current.bots;
-    int newTime = current.time + 1;
-    if (current.materials.GreaterOrEqual(blueprint.geodecost) && current.materials.EqualOnNonZeroComponent(blueprint.geodecost))
-    {
-        yield return new State(current.bots + new Stock(0, 0, 0, 1), newMaterials - blueprint.geodecost, newTime);
-    }
-    if (current.materials.GreaterOrEqual(blueprint.obsidiancost) && current.materials.EqualOnNonZeroComponent(blueprint.obsidiancost))
-    {
-        yield return new State(current.bots + new Stock(0, 0, 1, 0), newMaterials - blueprint.obsidiancost, newTime);
-    }
-    if (current.materials.GreaterOrEqual(blueprint.claycost) && current.materials.EqualOnNonZeroComponent(blueprint.claycost))
-    {
-        yield return new State(current.bots + new Stock(0, 1, 0, 0), newMaterials - blueprint.claycost, newTime);
-    }
-    if (current.materials.GreaterOrEqual(blueprint.orecost) && current.materials.EqualOnNonZeroComponent(blueprint.orecost))
-    {
-        yield return new State(current.bots + new Stock(1, 0, 0, 0), newMaterials - blueprint.orecost, newTime);
-    }
-    if (!(current.materials.GreaterOrEqual(blueprint.geodecost) &&
-        current.materials.GreaterOrEqual(blueprint.obsidiancost) &&
-        current.materials.GreaterOrEqual(blueprint.claycost) &&
-        current.materials.GreaterOrEqual(blueprint.orecost)))
-    {
-        yield return new State(current.bots, newMaterials, newTime);
-    }
-}
-*/
-
-IEnumerable<State> PossibleSuccessors2(State current, Blueprint blueprint, int maxTime)
+IEnumerable<State> PossibleSuccessors(State current, Blueprint blueprint, int maxTime)
 {
     if (current.time == maxTime)
     {
@@ -124,96 +89,12 @@ IEnumerable<State> PossibleSuccessors2(State current, Blueprint blueprint, int m
     }
 }
 
-int MostGeodes(Blueprint blueprint, int maxTime)
-{
-    State start = new State(new Stock(1, 0, 0, 0), new Stock(0, 0, 0, 0), 0);
-
-    Queue<State> search = new Queue<State>();
-    HashSet<State> visited = new HashSet<State>();
-    search.Enqueue(start);
-
-    int mostGeodes = 0;
-
-    while (search.Count > 0)
-    {
-        State current = search.Dequeue();
-        visited.Add(current);
-        if (current.materials.geodes > mostGeodes)
-        {
-            mostGeodes = current.materials.geodes;
-        }
-        foreach (State s in PossibleSuccessors2(current, blueprint, maxTime))
-        {
-            if (!visited.Contains(s))
-            {
-                search.Enqueue(s);
-            }
-        }
-    }
-    return mostGeodes;
-}
-
 int BlueprintQuality(Blueprint blueprint, int maxTime)
 {
     return MostGeodes(blueprint, maxTime) * blueprint.number;
 }
 
-int BlueprintQuality2(Blueprint blueprint, int maxTime)
-{
-    return MostGeodes3(blueprint, maxTime) * blueprint.number;
-}
-
-int MostGeodes2(Blueprint blueprint, int maxTime)
-{
-    int mostGeodes = 0;
-
-    int maxOreNeed = Math.Max(blueprint.orecost.ore, Math.Max(blueprint.claycost.ore, Math.Max(blueprint.obsidiancost.ore, blueprint.geodecost.ore)));
-    int maxClayNeed = blueprint.obsidiancost.clay;
-    int maxObsidianNeed = blueprint.geodecost.obsidian;
-
-    for (int oreBotTarget = 1; oreBotTarget <= maxOreNeed; ++oreBotTarget)
-    {
-        for (int clayBotTarget = 1; clayBotTarget <= maxClayNeed; ++clayBotTarget)
-        {
-            for (int obsidianBotTarget = 1; obsidianBotTarget <= maxOreNeed; ++obsidianBotTarget)
-            {
-                State start = new State(new Stock(1, 0, 0, 0), new Stock(0, 0, 0, 0), 0);
-                State current = start;
-                while (current.time < maxTime)
-                {
-                    if (current.materials.GreaterOrEqual(blueprint.geodecost))
-                    {
-                        current = new State(current.bots + new Stock(0, 0, 0, 1), current.materials + current.bots - blueprint.geodecost, current.time + 1);
-                    }
-                    else if (current.materials.GreaterOrEqual(blueprint.orecost) && current.bots.ore < oreBotTarget)
-                    {
-                        current = new State(current.bots + new Stock(1, 0, 0, 0), current.materials + current.bots - blueprint.orecost, current.time + 1);
-                    }
-                    else if (current.materials.GreaterOrEqual(blueprint.obsidiancost) && current.bots.obsidian < obsidianBotTarget)
-                    {
-                        current = new State(current.bots + new Stock(0, 0, 1, 0), current.materials + current.bots - blueprint.obsidiancost, current.time + 1);
-                    }
-                    else if (current.materials.GreaterOrEqual(blueprint.claycost) && current.bots.clay < clayBotTarget)
-                    {
-                        current = new State(current.bots + new Stock(0, 1, 0, 0), current.materials + current.bots - blueprint.claycost, current.time + 1);
-                    }
-                    else
-                    {
-                        current = new State(current.bots, current.materials + current.bots, current.time + 1);
-                    }
-                }
-                if (current.materials.geodes > mostGeodes)
-                {
-                    mostGeodes = current.materials.geodes;
-                }
-            }
-        }
-    }
-
-    return mostGeodes;
-}
-
-int MostGeodes3(Blueprint blueprint, int maxTime)
+int MostGeodes(Blueprint blueprint, int maxTime)
 {
     int mostGeodes = 0;
 
@@ -225,14 +106,14 @@ int MostGeodes3(Blueprint blueprint, int maxTime)
 
     Dictionary<State, int> subSolutions = new Dictionary<State, int>();
 
-    int MostGeodes3Sub(State current)
+    int MostGeodesSub(State current)
     {
         if (current.time == maxTime)
         {
             return current.materials.geodes;
         }
         int maxGeodes = 0;
-        foreach (State next in PossibleSuccessors2(current, blueprint, maxTime))
+        foreach (State next in PossibleSuccessors(current, blueprint, maxTime))
         {
             int geodes = 0;
             if (subSolutions.ContainsKey(next))
@@ -241,7 +122,7 @@ int MostGeodes3(Blueprint blueprint, int maxTime)
             }
             else
             {
-                geodes = MostGeodes3Sub(next);
+                geodes = MostGeodesSub(next);
                 subSolutions[next] = geodes;
             }
             if (geodes > maxGeodes)
@@ -252,18 +133,14 @@ int MostGeodes3(Blueprint blueprint, int maxTime)
         return maxGeodes;
     }
 
-    return MostGeodes3Sub(start);
+    return MostGeodesSub(start);
 }
 
 int totalQualities = blueprints.Select(b => BlueprintQuality(b, 24)).Sum();
 
 Console.WriteLine($"Sum of qualities = {totalQualities}");
 
-totalQualities = blueprints.Select(b => BlueprintQuality2(b, 24)).Sum();
-
-Console.WriteLine($"Sum of qualities = {totalQualities}");
-
-Console.WriteLine($"Part 2 = {blueprints.Take(3).Select(b => MostGeodes3(b, 32)).Aggregate((a, b) => a * b)}");
+Console.WriteLine($"Part 2 = {blueprints.Take(3).Select(b => MostGeodes(b, 32)).Aggregate((a, b) => a * b)}");
 
 record Stock(int ore, int clay, int obsidian, int geodes)
 {
@@ -276,15 +153,6 @@ record Stock(int ore, int clay, int obsidian, int geodes)
     public bool GreaterOrEqual(Stock other)
     {
         return ore >= other.ore && clay >= other.clay && obsidian >= other.obsidian && geodes >= other.geodes;
-    }
-
-    public bool EqualOnNonZeroComponent(Stock other)
-    {
-        if (ore >= 0 && ore == other.ore) return true;
-        if (clay >= 0 && clay == other.clay) return true;
-        if (obsidian >= 0 && obsidian == other.obsidian) return true;
-        if (geodes >= 0 && geodes == other.geodes) return true;
-        return false;
     }
 }
 
