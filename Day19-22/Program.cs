@@ -10,16 +10,15 @@ IEnumerable<State> PossibleSuccessors(State current, Blueprint blueprint, int ma
         yield break;
     }
     int remainingTime = maxTime - current.time;
-    int maxOreNeed = Math.Max(blueprint.orecost.ore, Math.Max(blueprint.claycost.ore, Math.Max(blueprint.obsidiancost.ore, blueprint.geodecost.ore))) * remainingTime;
-    int maxClayNeed = blueprint.obsidiancost.clay * remainingTime;
-    int maxObsidianNeed = blueprint.geodecost.obsidian * remainingTime;
 
-    Stock materialsAvailableInTime = current.materials + current.bots * (remainingTime - 1);
+    Stock maxNeeded = blueprint.MaxNeededPerStep() * remainingTime;
+
+    Stock materialsAvailableInTime = current.MaterialsAvailableInTime(maxTime);
 
     // Build no more robots
     yield return new State(current.bots, current.materials + current.bots * (maxTime - current.time), maxTime);
     // Build an ore bot next
-    if (materialsAvailableInTime.ore < maxOreNeed)
+    if (materialsAvailableInTime.ore < maxNeeded.ore)
     {
         int newTime = current.time;
         Stock newMaterials = current.materials;
@@ -37,7 +36,7 @@ IEnumerable<State> PossibleSuccessors(State current, Blueprint blueprint, int ma
         }
     }
     // Build a clay bot next
-    if (materialsAvailableInTime.clay < maxClayNeed)
+    if (materialsAvailableInTime.clay < maxNeeded.clay)
     {
         int newTime = current.time;
         Stock newMaterials = current.materials;
@@ -55,7 +54,7 @@ IEnumerable<State> PossibleSuccessors(State current, Blueprint blueprint, int ma
         }
     }
     // Build an obsidian bot next
-    if (current.bots.clay > 0 && materialsAvailableInTime.obsidian < maxObsidianNeed)
+    if (current.bots.clay > 0 && materialsAvailableInTime.obsidian < maxNeeded.obsidian)
     {
         int newTime = current.time;
         Stock newMaterials = current.materials;
@@ -100,6 +99,7 @@ int BlueprintQuality(Blueprint blueprint, int maxTime)
 int MostGeodes(Blueprint blueprint, int maxTime)
 {
     int mostGeodes = 0;
+    int enough = 1000000;
 
     int maxOreNeed = Math.Max(blueprint.orecost.ore, Math.Max(blueprint.claycost.ore, Math.Max(blueprint.obsidiancost.ore, blueprint.geodecost.ore)));
     int maxClayNeed = blueprint.obsidiancost.clay;
@@ -108,6 +108,26 @@ int MostGeodes(Blueprint blueprint, int maxTime)
     State start = new State(new Stock(1, 0, 0, 0), new Stock(0, 0, 0, 0), 0);
 
     Dictionary<State, int> subSolutions = new Dictionary<State, int>();
+
+    State NormaliseSufficientStocks(State state)
+    {
+        Stock maxNeeded = blueprint.MaxNeededPerStep() * (maxTime - state.time);
+        Stock availableInTime = state.MaterialsAvailableInTime(maxTime);
+        Stock normalized = state.materials;
+        if (availableInTime.ore >= maxNeeded.ore)
+        {
+            normalized = normalized with { ore = enough };
+        }
+        if (availableInTime.clay >= maxNeeded.clay)
+        {
+            normalized = normalized with { clay = enough };
+        }
+        if (availableInTime.obsidian >= maxNeeded.obsidian)
+        {
+            normalized = normalized with { obsidian = enough };
+        }
+        return state with { materials = normalized };
+    }
 
     int MostGeodesSub(State current)
     {
@@ -118,15 +138,16 @@ int MostGeodes(Blueprint blueprint, int maxTime)
         int maxGeodes = 0;
         foreach (State next in PossibleSuccessors(current, blueprint, maxTime))
         {
+            State normalized = NormaliseSufficientStocks(next);
             int geodes = 0;
-            if (subSolutions.ContainsKey(next))
+            if (subSolutions.ContainsKey(normalized))
             {
-                geodes = subSolutions[next];
+                geodes = subSolutions[normalized];
             }
             else
             {
-                geodes = MostGeodesSub(next);
-                subSolutions[next] = geodes;
+                geodes = MostGeodesSub(normalized);
+                subSolutions[normalized] = geodes;
             }
             if (geodes > maxGeodes)
             {
@@ -173,10 +194,18 @@ record Blueprint(int number, Stock orecost, Stock claycost, Stock obsidiancost, 
             new Stock(int.Parse(parts[18]), int.Parse(parts[21]), 0, 0),
             new Stock(int.Parse(parts[27]), 0, int.Parse(parts[30]), 0));
     }
+
+    public Stock MaxNeededPerStep() {
+        return new Stock(
+            Math.Max(orecost.ore, Math.Max(claycost.ore, Math.Max(obsidiancost.ore, geodecost.ore))),
+            obsidiancost.clay,
+            geodecost.obsidian,
+            0);
+    }
 }
 
 record State(Stock bots, Stock materials, int time)
 {
-
+    public Stock MaterialsAvailableInTime(int maxTime) => materials + bots * (maxTime - time - 1);
 }
 
