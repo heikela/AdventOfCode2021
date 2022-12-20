@@ -9,14 +9,17 @@ IEnumerable<State> PossibleSuccessors(State current, Blueprint blueprint, int ma
     {
         yield break;
     }
-    int maxOreNeed = Math.Max(blueprint.orecost.ore, Math.Max(blueprint.claycost.ore, Math.Max(blueprint.obsidiancost.ore, blueprint.geodecost.ore)));
-    int maxClayNeed = blueprint.obsidiancost.clay;
-    int maxObsidianNeed = blueprint.geodecost.obsidian;
+    int remainingTime = maxTime - current.time;
+    int maxOreNeed = Math.Max(blueprint.orecost.ore, Math.Max(blueprint.claycost.ore, Math.Max(blueprint.obsidiancost.ore, blueprint.geodecost.ore))) * remainingTime;
+    int maxClayNeed = blueprint.obsidiancost.clay * remainingTime;
+    int maxObsidianNeed = blueprint.geodecost.obsidian * remainingTime;
+
+    Stock materialsAvailableInTime = current.materials + current.bots * (remainingTime - 1);
 
     // Build no more robots
     yield return new State(current.bots, current.materials + current.bots * (maxTime - current.time), maxTime);
     // Build an ore bot next
-    if (current.bots.ore < maxOreNeed)
+    if (materialsAvailableInTime.ore < maxOreNeed)
     {
         int newTime = current.time;
         Stock newMaterials = current.materials;
@@ -34,7 +37,7 @@ IEnumerable<State> PossibleSuccessors(State current, Blueprint blueprint, int ma
         }
     }
     // Build a clay bot next
-    if (current.bots.clay < maxClayNeed)
+    if (materialsAvailableInTime.clay < maxClayNeed)
     {
         int newTime = current.time;
         Stock newMaterials = current.materials;
@@ -52,7 +55,7 @@ IEnumerable<State> PossibleSuccessors(State current, Blueprint blueprint, int ma
         }
     }
     // Build an obsidian bot next
-    if (current.bots.clay > 0 && current.bots.obsidian < maxObsidianNeed)
+    if (current.bots.clay > 0 && materialsAvailableInTime.obsidian < maxObsidianNeed)
     {
         int newTime = current.time;
         Stock newMaterials = current.materials;
