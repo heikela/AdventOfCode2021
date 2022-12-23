@@ -28,6 +28,11 @@ foreach (var line in input)
     }
 }
 
+if (dependencies.Count(kv => kv.Value.Count > 1) > 0)
+{
+    Console.WriteLine("Some monkeys are listened to by multiple monkeys. Can't trivially solve problem");
+}
+
 while (readyToCalculate.Count > 0)
 {
     Monkey current = readyToCalculate.First();
@@ -48,6 +53,7 @@ while (readyToCalculate.Count > 0)
     }
 }
 
+Console.WriteLine(monkeys["root"].Solve(0, monkeys, knownValues));
 
 public abstract record Monkey()
 {
@@ -76,6 +82,21 @@ public abstract record Monkey()
     public abstract long CalculateValue(Dictionary<string, long> knownValues);
 
     public abstract bool ValueKnownAtStart();
+
+    public static bool DependsOnHuman(Monkey monkey, Dictionary<string, Monkey> monkeys)
+    {
+        if (monkey.Name() == "humn")
+        {
+            return true;
+        }
+        return monkey.Dependencies().Any(name => DependsOnHuman(monkeys[name], monkeys));
+    }
+
+    public abstract long Solve(long target, Dictionary<string, Monkey> monkeys, Dictionary<string, long> knownValues);
+
+    public abstract long SolveLeft(long target, Dictionary<string, Monkey> monkeys, Dictionary<string, long> knownValues);
+
+    public abstract long SolveRight(long target, Dictionary<string, Monkey> monkeys, Dictionary<string, long> knownValues);
 }
 
 public record StaticMonkey(string name, long value) : Monkey
@@ -100,6 +121,24 @@ public record StaticMonkey(string name, long value) : Monkey
         return true;
     }
 
+    public override long Solve(long target, Dictionary<string, Monkey> monkeys, Dictionary<string, long> knownValues)
+    {
+        if (Name() == "humn")
+        {
+            return target;
+        }
+        throw new NotImplementedException();
+    }
+
+    public override long SolveLeft(long target, Dictionary<string, Monkey> monkeys, Dictionary<string, long> knownValues)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override long SolveRight(long target, Dictionary<string, Monkey> monkeys, Dictionary<string, long> knownValues)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public record OpMonkey(string name, string op, string left, string right) : Monkey
@@ -138,4 +177,63 @@ public record OpMonkey(string name, string op, string left, string right) : Monk
     {
         return false;
     }
+
+    public override long Solve( long target, Dictionary<string, Monkey> monkeys, Dictionary<string, long> knownValues)
+    {
+        if (Name() == "root")
+        {
+            if (Monkey.DependsOnHuman(monkeys[left], monkeys))
+            {
+                return monkeys[left].Solve(knownValues[right], monkeys, knownValues);
+            }
+            else
+            {
+                return monkeys[right].Solve(knownValues[left], monkeys, knownValues);
+            }
+        }
+        if (Monkey.DependsOnHuman(monkeys[left], monkeys))
+        {
+            return SolveLeft(target, monkeys, knownValues);
+        }
+        else
+        {
+            return SolveRight(target, monkeys, knownValues);
+        }
+    }
+
+    public override long SolveLeft(long target, Dictionary<string, Monkey> monkeys, Dictionary<string, long> knownValues)
+    {
+        long rightVal = knownValues[right];
+        switch (op)
+        {
+            case "+":
+                return monkeys[left].Solve(target - rightVal, monkeys, knownValues);
+            case "-":
+                return monkeys[left].Solve(target + rightVal, monkeys, knownValues);
+            case "*":
+                return monkeys[left].Solve(target / rightVal, monkeys, knownValues);
+            case "/":
+                return monkeys[left].Solve(target * rightVal, monkeys, knownValues);
+        }
+        throw new ArgumentException($"Unknown operation {op}");
+    }
+
+    public override long SolveRight(long target, Dictionary<string, Monkey> monkeys, Dictionary<string, long> knownValues)
+    {
+        long leftVal = knownValues[left];
+        switch (op)
+        {
+            case "+":
+                return monkeys[right].Solve(target - leftVal, monkeys, knownValues);
+            case "-":
+                return monkeys[right].Solve(leftVal - target, monkeys, knownValues);
+            case "*":
+                return monkeys[right].Solve(target / leftVal, monkeys, knownValues);
+            case "/":
+                return monkeys[right].Solve(target / leftVal, monkeys, knownValues);
+        }
+        throw new ArgumentException($"Unknown operation {op}");
+    }
+
+
 }
