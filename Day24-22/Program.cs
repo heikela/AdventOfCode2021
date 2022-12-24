@@ -57,9 +57,21 @@ foreach (var line in input)
 
 GraphByFunction<Point> moveGraph = new GraphByFunction<Point>(ValidMovesFrom);
 
-var path = moveGraph.ShortestPathTo(start, IsExit);
+// We can do this in three segments because the start and exit squares are safe for waiting
 
-Console.WriteLine($"Shortest path to exit takes {path.GetLength()}");
+var path1 = moveGraph.ShortestPathTo(start, IsExit);
+Point exit1 = path1.GetNodesOnPath().Last();
+var path2 = moveGraph.ShortestPathTo(exit1, IsStart);
+Point start2 = path2.GetNodesOnPath().Last();
+var path3 = moveGraph.ShortestPathTo(start2, IsExit);
+Point exit2 = path3.GetNodesOnPath().Last();
+
+
+Console.WriteLine($"Shortest path to exit takes {path1.GetLength()} steps");
+Console.WriteLine($"Shortest path to exit takes {exit1.t} steps");
+Console.WriteLine($"Shortest path to exit, back to start, and again to exit takes {exit2.t} steps");
+
+// not 562
 
 IEnumerable<Point> ValidMovesFrom(Point p)
 {
