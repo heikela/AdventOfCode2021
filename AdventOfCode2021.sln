@@ -71,47 +71,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day16-22", "Day16-22\Day16-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day17-22", "Day17-22\Day17-22.csproj", "{9A5C5E19-94D7-4502-B971-F46CE91AB202}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day18-22", "Day18-22\Day18-22.csproj", "{881138E8-8C6F-4B89-8B6A-8690D4D86ECB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day18-22", "Day18-22\Day18-22.csproj", "{881138E8-8C6F-4B89-8B6A-8690D4D86ECB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day19-22", "Day19-22\Day19-22.csproj", "{E2D41973-F37D-4BA3-A174-F4D34355D1AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day19-22", "Day19-22\Day19-22.csproj", "{E2D41973-F37D-4BA3-A174-F4D34355D1AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day20-22", "Day20-22\Day20-22.csproj", "{B95A3CE5-6187-403B-9879-7FABBF49956A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day20-22", "Day20-22\Day20-22.csproj", "{B95A3CE5-6187-403B-9879-7FABBF49956A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day21-22", "Day21-22\Day21-22.csproj", "{829B2301-3D6C-43CF-924C-549D81BAFEDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day21-22", "Day21-22\Day21-22.csproj", "{829B2301-3D6C-43CF-924C-549D81BAFEDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day22-22", "Day22-22\Day22-22.csproj", "{6F80B5DA-8B13-4651-A5EB-BC62DAA69D6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day22-22", "Day22-22\Day22-22.csproj", "{6F80B5DA-8B13-4651-A5EB-BC62DAA69D6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day23-22", "Day23-22\Day23-22.csproj", "{7D9A5F19-A6AC-4CFF-A684-C0FBDD4300EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day23-22", "Day23-22\Day23-22.csproj", "{7D9A5F19-A6AC-4CFF-A684-C0FBDD4300EC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day24-22", "Day24-22\Day24-22.csproj", "{D39C4B83-1319-4D9A-AC45-437B62769439}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Common\Common.projitems*{004ca17f-463c-421d-95f5-483b5b193481}*SharedItemsImports = 5
-		Common\Common.projitems*{021b67a2-c592-458f-b4e3-634d9573ea62}*SharedItemsImports = 5
-		Common\Common.projitems*{094ebfed-f33e-479c-a14c-8e8751cd1701}*SharedItemsImports = 5
-		Common\Common.projitems*{107b5e01-9603-4e24-a0fa-f42255c186a9}*SharedItemsImports = 5
-		Common\Common.projitems*{22cd4fd4-e3ca-473e-999b-6f8889eab101}*SharedItemsImports = 13
-		Common\Common.projitems*{2d454e45-b17e-4738-829d-7dba91353289}*SharedItemsImports = 5
-		Common\Common.projitems*{30aa56ef-28bc-48ab-80b1-72f522705dec}*SharedItemsImports = 5
-		Common\Common.projitems*{387d98ed-0687-427f-b326-498b9b229f67}*SharedItemsImports = 5
-		Common\Common.projitems*{6968c321-cdf4-4469-b744-64d60686e90e}*SharedItemsImports = 5
-		Common\Common.projitems*{6f80b5da-8b13-4651-a5eb-bc62daa69d6a}*SharedItemsImports = 5
-		Common\Common.projitems*{70c02471-09ce-42d9-bcc1-bea3f8e224af}*SharedItemsImports = 5
-		Common\Common.projitems*{7a70137e-d3a3-442f-a9d8-588421955355}*SharedItemsImports = 5
-		Common\Common.projitems*{7d973175-9ebe-46cd-b5e2-efe736a25306}*SharedItemsImports = 5
-		Common\Common.projitems*{80227013-c309-4781-9b1d-ed18eafb2f7d}*SharedItemsImports = 5
-		Common\Common.projitems*{a381dba1-09d4-4121-98cc-c2e714138066}*SharedItemsImports = 5
-		Common\Common.projitems*{a5e338db-a923-4444-8c9f-874d0457f517}*SharedItemsImports = 5
-		Common\Common.projitems*{aae39024-69eb-4917-b23d-34b49818a785}*SharedItemsImports = 5
-		Common\Common.projitems*{bb52e0dd-0cac-4b99-8e56-be1da321acea}*SharedItemsImports = 5
-		Common\Common.projitems*{bb55d30f-e6fe-4ce5-8d3f-893bd7073f78}*SharedItemsImports = 5
-		Common\Common.projitems*{bd8ab143-de7d-4201-9f9a-72d845b7a6fc}*SharedItemsImports = 5
-		Common\Common.projitems*{ce00ff63-bd35-4608-8ece-860e475469ac}*SharedItemsImports = 5
-		Common\Common.projitems*{e24124a8-3ff4-4357-b37f-fb67236796ad}*SharedItemsImports = 5
-		Common\Common.projitems*{ec362a9d-c2d5-4c7a-906d-58302d58d17b}*SharedItemsImports = 5
-		Common\Common.projitems*{ef358d5d-8493-42a5-a237-57c1d176784e}*SharedItemsImports = 5
-		Common\Common.projitems*{f00c241b-96fd-45aa-957e-972d42dc67ed}*SharedItemsImports = 5
-		Common\Common.projitems*{faae3cd5-2b29-4108-8996-6e77aead9f88}*SharedItemsImports = 5
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -273,11 +247,44 @@ Global
 		{7D9A5F19-A6AC-4CFF-A684-C0FBDD4300EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D9A5F19-A6AC-4CFF-A684-C0FBDD4300EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D9A5F19-A6AC-4CFF-A684-C0FBDD4300EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D39C4B83-1319-4D9A-AC45-437B62769439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D39C4B83-1319-4D9A-AC45-437B62769439}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D39C4B83-1319-4D9A-AC45-437B62769439}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D39C4B83-1319-4D9A-AC45-437B62769439}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7F328F7-48A7-4C95-B662-68870865AF2D}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Common\Common.projitems*{004ca17f-463c-421d-95f5-483b5b193481}*SharedItemsImports = 5
+		Common\Common.projitems*{021b67a2-c592-458f-b4e3-634d9573ea62}*SharedItemsImports = 5
+		Common\Common.projitems*{094ebfed-f33e-479c-a14c-8e8751cd1701}*SharedItemsImports = 5
+		Common\Common.projitems*{107b5e01-9603-4e24-a0fa-f42255c186a9}*SharedItemsImports = 5
+		Common\Common.projitems*{22cd4fd4-e3ca-473e-999b-6f8889eab101}*SharedItemsImports = 13
+		Common\Common.projitems*{2d454e45-b17e-4738-829d-7dba91353289}*SharedItemsImports = 5
+		Common\Common.projitems*{30aa56ef-28bc-48ab-80b1-72f522705dec}*SharedItemsImports = 5
+		Common\Common.projitems*{387d98ed-0687-427f-b326-498b9b229f67}*SharedItemsImports = 5
+		Common\Common.projitems*{6968c321-cdf4-4469-b744-64d60686e90e}*SharedItemsImports = 5
+		Common\Common.projitems*{6f80b5da-8b13-4651-a5eb-bc62daa69d6a}*SharedItemsImports = 5
+		Common\Common.projitems*{70c02471-09ce-42d9-bcc1-bea3f8e224af}*SharedItemsImports = 5
+		Common\Common.projitems*{7a70137e-d3a3-442f-a9d8-588421955355}*SharedItemsImports = 5
+		Common\Common.projitems*{7d973175-9ebe-46cd-b5e2-efe736a25306}*SharedItemsImports = 5
+		Common\Common.projitems*{80227013-c309-4781-9b1d-ed18eafb2f7d}*SharedItemsImports = 5
+		Common\Common.projitems*{a381dba1-09d4-4121-98cc-c2e714138066}*SharedItemsImports = 5
+		Common\Common.projitems*{a5e338db-a923-4444-8c9f-874d0457f517}*SharedItemsImports = 5
+		Common\Common.projitems*{aae39024-69eb-4917-b23d-34b49818a785}*SharedItemsImports = 5
+		Common\Common.projitems*{bb52e0dd-0cac-4b99-8e56-be1da321acea}*SharedItemsImports = 5
+		Common\Common.projitems*{bb55d30f-e6fe-4ce5-8d3f-893bd7073f78}*SharedItemsImports = 5
+		Common\Common.projitems*{bd8ab143-de7d-4201-9f9a-72d845b7a6fc}*SharedItemsImports = 5
+		Common\Common.projitems*{ce00ff63-bd35-4608-8ece-860e475469ac}*SharedItemsImports = 5
+		Common\Common.projitems*{d39c4b83-1319-4d9a-ac45-437b62769439}*SharedItemsImports = 5
+		Common\Common.projitems*{e24124a8-3ff4-4357-b37f-fb67236796ad}*SharedItemsImports = 5
+		Common\Common.projitems*{ec362a9d-c2d5-4c7a-906d-58302d58d17b}*SharedItemsImports = 5
+		Common\Common.projitems*{ef358d5d-8493-42a5-a237-57c1d176784e}*SharedItemsImports = 5
+		Common\Common.projitems*{f00c241b-96fd-45aa-957e-972d42dc67ed}*SharedItemsImports = 5
+		Common\Common.projitems*{faae3cd5-2b29-4108-8996-6e77aead9f88}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

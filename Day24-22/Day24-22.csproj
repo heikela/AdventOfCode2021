@@ -2,10 +2,12 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <RootNamespace>Day23_22</RootNamespace>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Day24_22</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <Import Project="..\Common\Common.projitems" Label="Shared" />
 
 </Project>
