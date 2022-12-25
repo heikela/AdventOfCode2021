@@ -71,8 +71,6 @@ Console.WriteLine($"Shortest path to exit takes {path1.GetLength()} steps");
 Console.WriteLine($"Shortest path to exit takes {exit1.t} steps");
 Console.WriteLine($"Shortest path to exit, back to start, and again to exit takes {exit2.t} steps");
 
-// not 562
-
 IEnumerable<Point> ValidMovesFrom(Point p)
 {
     foreach (Point dir in directions)
