@@ -3,6 +3,8 @@
 //string[] lines = File.ReadAllLines("../../../testInput.txt").ToArray();
 string[] lines = File.ReadAllLines("../../../input.txt").ToArray();
 
+Dictionary<string, int> digits = Enumerable.Range(0, 10).Select(n => new KeyValuePair<string, int>(n.ToString(), n)).ToDictionary();
+
 Dictionary<string, int> spelledDigits = new Dictionary<string, int>()
 {
     { "one", 1 },
@@ -15,8 +17,6 @@ Dictionary<string, int> spelledDigits = new Dictionary<string, int>()
     { "eight", 8 },
     { "nine", 9 }
 };
-
-Dictionary<string, int> digits = Enumerable.Range(0, 10).Select(n => new KeyValuePair<string, int>(n.ToString(), n)).ToDictionary();
 
 Dictionary<string, int> allDigits = spelledDigits.Union(digits).ToDictionary();
 
