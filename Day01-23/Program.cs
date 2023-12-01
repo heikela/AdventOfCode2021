@@ -48,13 +48,8 @@ static Func<string, int> LineToNumber(Dictionary<string, int> digitRepresentatio
     };
 }
 
-int sum = 0;
-int sum2 = 0;
+int sum = lines.Sum(LineToNumber(digits));
+int sum2 = lines.Sum(LineToNumber(allDigits));
 
-foreach (var line in lines)
-{
-    sum += LineToNumber(digits)(line);
-    sum2 += LineToNumber(allDigits)(line);
-}
 Console.WriteLine(sum);
 Console.WriteLine(sum2);
