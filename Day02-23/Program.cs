@@ -54,5 +54,3 @@ public record Game
     public int MaxRed = 0;
     public int MaxGreen = 0;
 }
-
-// not 5050
