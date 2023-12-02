@@ -37,10 +37,15 @@ static bool PossiblePart1(Game game)
     return game.MaxRed <= 12 && game.MaxGreen <= 13 && game.MaxBlue <= 14;
 }
 
+static int Power(Game game)
+{
+    return game.MaxBlue * game.MaxRed * game.MaxGreen;
+}
 
 var games = lines.Select(AnalyseLine);
 
 Console.WriteLine(games.Where(PossiblePart1).Select(g => g.Id).Sum());
+Console.WriteLine(games.Select(Power).Sum());
 
 public record Game
 {
