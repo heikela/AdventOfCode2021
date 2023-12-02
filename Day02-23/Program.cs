@@ -1,11 +1,14 @@
-﻿//string[] lines = File.ReadAllLines("../../../testInput.txt").ToArray();
+﻿using Common;
+
+//string[] lines = File.ReadAllLines("../../../testInput.txt").ToArray();
 string[] lines = File.ReadAllLines("../../../input.txt").ToArray();
 
-static Game AnalyseLine(string line)
+static Dictionary<string, int> AnalyseLine(string line)
 {
     var parts = line.Split(':');
     int Id = int.Parse(parts[0].Split(' ')[1]);
-    Game result = new Game() { Id = Id };
+    Dictionary<string, int> game = new Dictionary<string, int>();
+    game["Id"] = Id;
     foreach (var sample in parts[1].Split(";"))
     {
         foreach (var colourSample in sample.Split(','))
@@ -13,44 +16,23 @@ static Game AnalyseLine(string line)
             var trimmedSample = colourSample.Trim();
             int number = int.Parse(trimmedSample.Split(' ')[0]);
             string colour = trimmedSample.Split(' ')[1];
-            switch (colour)
-            {
-                case "red":
-                    result.MaxRed = Math.Max(result.MaxRed, number);
-                    break;
-                case "green":
-                    result.MaxGreen = Math.Max(result.MaxGreen, number);
-                    break;
-                case "blue":
-                    result.MaxBlue = Math.Max(result.MaxBlue, number);
-                    break;
-                default:
-                    break;
-            }
+            game.AccumulateForKey(Math.Max, 0, colour, number);
         }
     }
-    return result;
+    return game;
 }
 
-static bool PossiblePart1(Game game)
+static bool PossiblePart1(Dictionary<string, int> game)
 {
-    return game.MaxRed <= 12 && game.MaxGreen <= 13 && game.MaxBlue <= 14;
+    return game["red"] <= 12 && game["green"] <= 13 && game["blue"] <= 14;
 }
 
-static int Power(Game game)
+static int Power(Dictionary<string, int> game)
 {
-    return game.MaxBlue * game.MaxRed * game.MaxGreen;
+    return game["red"] * game["green"] * game["blue"];
 }
 
 var games = lines.Select(AnalyseLine);
 
-Console.WriteLine(games.Where(PossiblePart1).Select(g => g.Id).Sum());
+Console.WriteLine(games.Where(PossiblePart1).Select(g => g["Id"]).Sum());
 Console.WriteLine(games.Select(Power).Sum());
-
-public record Game
-{
-    public int Id;
-    public int MaxBlue = 0;
-    public int MaxRed = 0;
-    public int MaxGreen = 0;
-}

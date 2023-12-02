@@ -128,6 +128,18 @@ namespace Common
             }
         }
 
+        public static void AccumulateForKey<TKey, TVal>(this Dictionary<TKey, TVal> dict, Func<TVal, TVal, TVal> Combine, TVal initialVal, TKey key, TVal value)
+        {
+            if (dict.ContainsKey(key))
+            {
+                dict[key] = Combine(dict[key], value);
+            }
+            else
+            {
+                dict.Add(key, Combine(initialVal, value));
+            }
+        }
+
 
     }
 

@@ -83,9 +83,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day22-22", "Day22-22\Day22-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day23-22", "Day23-22\Day23-22.csproj", "{7D9A5F19-A6AC-4CFF-A684-C0FBDD4300EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day01-23", "Day01-23\Day01-23.csproj", "{702A6C3D-57AF-44AE-BA64-C1B2D8E288D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day01-23", "Day01-23\Day01-23.csproj", "{702A6C3D-57AF-44AE-BA64-C1B2D8E288D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day02-23", "Day02-23\Day02-23.csproj", "{9DB36EA0-C63B-427F-B0DD-AE172B4FEC5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day02-23", "Day02-23\Day02-23.csproj", "{9DB36EA0-C63B-427F-B0DD-AE172B4FEC5F}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -104,6 +104,7 @@ Global
 		Common\Common.projitems*{7a70137e-d3a3-442f-a9d8-588421955355}*SharedItemsImports = 5
 		Common\Common.projitems*{7d973175-9ebe-46cd-b5e2-efe736a25306}*SharedItemsImports = 5
 		Common\Common.projitems*{80227013-c309-4781-9b1d-ed18eafb2f7d}*SharedItemsImports = 5
+		Common\Common.projitems*{9db36ea0-c63b-427f-b0dd-ae172b4fec5f}*SharedItemsImports = 5
 		Common\Common.projitems*{a381dba1-09d4-4121-98cc-c2e714138066}*SharedItemsImports = 5
 		Common\Common.projitems*{a5e338db-a923-4444-8c9f-874d0457f517}*SharedItemsImports = 5
 		Common\Common.projitems*{aae39024-69eb-4917-b23d-34b49818a785}*SharedItemsImports = 5
