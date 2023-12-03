@@ -5,6 +5,8 @@ string fileName = "../../../input.txt";
 
 string[] lines = File.ReadAllLines(fileName).ToArray();
 
+// First, figure out how to interpret the characters in the input
+
 const char EMPTY = '.';
 
 static bool isDigit(char c)
@@ -29,9 +31,10 @@ static bool isSymbol(char c)
     return c != EMPTY && !isDigit(c);
 }
 
+// Parse the input into lists of more manageable elements
 
-Dictionary<Point, char> points = new Dictionary<Point, char>();
 List<Number> numbers = new List<Number>();
+List<Symbol> symbols = new List<Symbol>();
 
 int y = 0;
 foreach (string line in lines)
@@ -41,7 +44,6 @@ foreach (string line in lines)
     foreach (char c in line)
     {
         Point currentPos = new Point(x, y);
-        points.Add(currentPos, c);
         if (isDigit(c))
         {
             currentNumber.AddDigit(getDigit(c), currentPos);
@@ -53,6 +55,10 @@ foreach (string line in lines)
                 numbers.Add(currentNumber);
                 currentNumber = new Number();
             }
+            if (isSymbol(c))
+            {
+                symbols.Add(new Symbol(c, currentPos));
+            }
         }
         ++x;
     }
@@ -63,35 +69,62 @@ foreach (string line in lines)
     ++y;
 }
 
+List<Element> elements = numbers.Union<Element>(symbols).ToList();
+
+// Maintain a lookup of elements by position
+
+Dictionary<Point, Element> elementsByPos = elements.SelectMany(el => el.GetPositions().Select(p => new KeyValuePair<Point, Element>(p, el))).ToDictionary();
+
+// Define adjacency
+
 Point zero = new Point(0, 0);
 List<Point> adjacent = Enumerable.Range(-1, 3).SelectMany(dy => Enumerable.Range(-1, 3).Select(dx => new Point(dx, dy))).Where(p => p != zero).ToList();
 
-IEnumerable<Point> neighbours(Point point)
+IEnumerable<Point> adjacentPoints(Point point)
 {
     return adjacent.Select(d => d + point);
 }
 
-bool nextToSymbol(Point p)
+IEnumerable<Point> AdjacentPositions(Element el)
 {
-    return neighbours(p).Any(n => isSymbol(points.GetOrElse(n, EMPTY)));
+    return el.GetPositions().SelectMany(adjacentPoints).Where(p => !el.GetPositions().Contains(p));
 }
+
+IEnumerable<Element> neighbours(Element element)
+{
+    return AdjacentPositions(element).SelectMany(p =>
+    {
+        if (elementsByPos.ContainsKey(p))
+        {
+            return new Element[] { elementsByPos[p] };
+        }
+        else
+        {
+            return new Element[] {};
+        }
+    }).ToHashSet();
+}
+
+// Define part numbers based on adjacency
 
 bool isPartNumber(Number n)
 {
-    return n.GetPosition().Any(nextToSymbol);
+    return neighbours(n).Any(el => el.IsSymbol());
 }
+
+// Solve part 1
 
 Console.WriteLine(numbers.Where(isPartNumber).Select(n => n.Value()).Sum());
 
-IEnumerable<Number> adjacentNumbers(Point point)
-{
-    return numbers.Where(n => n.GetPosition().SelectMany(neighbours).Any(adjacentPos => adjacentPos == point));
-}
+// Find gears
 
-var gears = points.Where(p => p.Value == '*').Where(p => adjacentNumbers(p.Key).Count() == 2);
+var gears = symbols.Where(s => s.IsSymbol('*')).Where(s => neighbours(s).Where(n => n.IsNumber()).Count() == 2);
 
-Console.WriteLine(gears.Select(g => adjacentNumbers(g.Key).Select(number => number.Value()).Aggregate(1, (a, b) => a * b)).Sum());
+// Solve part 2
 
+Console.WriteLine(gears.Select(g => neighbours(g).Where(n => n.IsNumber()).Select(number => number.Value()).Aggregate(1, (a, b) => a * b)).Sum());
+
+// Classes to encapsulate some of the data and operations
 public record Point(int x, int y)
 {
     public static Point operator+(Point a, Point b)
@@ -100,28 +133,56 @@ public record Point(int x, int y)
     }
 }
 
-public record Number() {
+public class Element
+{
+    protected List<Point> Positions = new List<Point>();
+
+    public virtual bool IsSymbol() { return false; }
+    public virtual bool IsSymbol(char symbol) { return false; }
+    public virtual bool IsNumber() { return false; }
+    public virtual int Value() { throw new NotImplementedException("Trying to call Value on an element that is not a number"); }
+    public IEnumerable<Point> GetPositions() { return Positions; }
+}
+
+public class Number : Element {
     private int _Value = 0;
-    private List<Point> _Position = new List<Point>();
     public void AddDigit(int d, Point position)
     {
-        _Position.Add(position);
+        Positions.Add(position);
         _Value *= 10;
         _Value += d;
     }
 
-    public int Value()
+    public override 
+        int Value()
     {
         return _Value;
     }
 
-    public IEnumerable<Point> GetPosition()
+    public override bool IsNumber()
     {
-        return _Position;
+        return true;
     }
 
     public bool IsEmpty()
     {
-        return _Position.Count == 0;
+        return Positions.Count == 0;
+    }
+}
+
+public class Symbol : Element {
+    private readonly char TheSymbol;
+    public Symbol(char symbol, Point position)
+    {
+        Positions = new List<Point>() { position };
+        TheSymbol = symbol;
+    }
+    public override bool IsSymbol()
+    {
+        return true;
+    }
+    public override bool IsSymbol(char symbol)
+    {
+        return symbol == TheSymbol;
     }
 }
