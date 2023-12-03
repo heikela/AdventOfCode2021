@@ -87,6 +87,15 @@ static bool isSymbol(char c)
 
 Console.WriteLine(numbers.Where(number => number.Key.SelectMany(p => neighbours(p)).Any(n => isSymbol(points.GetOrElse(n, '.')))).Select(p => p.Value).Sum());
 
+IEnumerable<KeyValuePair<List<Point>, int>> numberNeighbours(Point point)
+{
+    return numbers.Where(n => n.Key.SelectMany(neighbours).Any(numberNeighbour => numberNeighbour == point));
+}
+
+var gears = points.Where(p => p.Value == '*').Where(p => numberNeighbours(p.Key).Count() == 2);
+
+Console.WriteLine(gears.Select(g => numberNeighbours(g.Key).Select(number => number.Value).Aggregate(1, (a, b) => a * b)).Sum());
+
 public record Point(int x, int y)
 {
     public static Point operator+(Point a, Point b)
