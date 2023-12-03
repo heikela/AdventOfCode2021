@@ -45,17 +45,8 @@ foreach (string line in lines)
     ++y;
 }
 
-List<Point> adjacent = new List<Point>();
-for (int dy = -1; dy <= 1; dy++)
-{
-    for (int dx = -1; dx <= 1; dx++)
-    {
-        if (!(dx == 0 && dy == 0))
-        {
-            adjacent.Add(new Point(dx, dy));
-        }
-    }
-}
+Point zero = new Point(0, 0);
+List<Point> adjacent = Enumerable.Range(-1, 3).SelectMany(dy => Enumerable.Range(-1, 3).Select(dx => new Point(dx, dy))).Where(p => p != zero).ToList();
 
 IEnumerable<Point> neighbours(Point point)
 {
