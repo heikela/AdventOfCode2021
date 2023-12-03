@@ -5,6 +5,31 @@ string fileName = "../../../input.txt";
 
 string[] lines = File.ReadAllLines(fileName).ToArray();
 
+const char EMPTY = '.';
+
+static bool isDigit(char c)
+{
+    return (c >= '0' && c <= '9');
+}
+
+static int getDigit(char c)
+{
+    if (isDigit(c))
+    {
+        return c - '0';
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+static bool isSymbol(char c)
+{
+    return c != EMPTY && !isDigit(c);
+}
+
+
 Dictionary<Point, char> points = new Dictionary<Point, char>();
 List<Number> numbers = new List<Number>();
 
@@ -46,31 +71,9 @@ IEnumerable<Point> neighbours(Point point)
     return adjacent.Select(d => d + point);
 }
 
-static bool isDigit(char c)
-{
-    return (c >= '0' && c <= '9');
-}
-
-static int getDigit(char c)
-{
-    if (isDigit(c))
-    {
-        return c - '0';
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-static bool isSymbol(char c)
-{
-    return c != '.' && !isDigit(c);
-}
-
 bool nextToSymbol(Point p)
 {
-    return neighbours(p).Any(n => isSymbol(points.GetOrElse(n, '.')));
+    return neighbours(p).Any(n => isSymbol(points.GetOrElse(n, EMPTY)));
 }
 
 bool isPartNumber(Number n)
