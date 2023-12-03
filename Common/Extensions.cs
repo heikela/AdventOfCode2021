@@ -104,28 +104,14 @@ namespace Common
             }
         }
 
-        public static void AddToCount<T>(this Dictionary<T, int> dict, T val, int count)
+        public static void AddToCount<T>(this Dictionary<T, int> dict, T key, int count)
         {
-            if (dict.ContainsKey(val))
-            {
-                dict[val] += count;
-            }
-            else
-            {
-                dict.Add(val, count);
-            }
+            dict.AccumulateForKey((a, b) => a + b, 0, key, count);
         }
 
-        public static void AddToCount<T>(this Dictionary<T, long> dict, T val, long count)
+        public static void AddToCount<T>(this Dictionary<T, long> dict, T key, long count)
         {
-            if (dict.ContainsKey(val))
-            {
-                dict[val] += count;
-            }
-            else
-            {
-                dict.Add(val, count);
-            }
+            dict.AccumulateForKey((a, b) => a + b, 0, key, count);
         }
 
         public static void AccumulateForKey<TKey, TVal>(this Dictionary<TKey, TVal> dict, Func<TVal, TVal, TVal> Combine, TVal initialVal, TKey key, TVal value)
