@@ -6,41 +6,34 @@ string fileName = "../../../input.txt";
 string[] lines = File.ReadAllLines(fileName).ToArray();
 
 Dictionary<Point, char> points = new Dictionary<Point, char>();
-Dictionary<List<Point>, int> numbers = new Dictionary<List<Point>, int>();
-
-
+List<Number> numbers = new List<Number>();
 
 int y = 0;
 foreach (string line in lines)
 {
     int x = 0;
-    int currentNumber = 0;
-    List<Point> currentNumberPositions = new List<Point>();
+    Number currentNumber = new Number();
     foreach (char c in line)
     {
-        points.Add(new Point(x, y), c);
+        Point currentPos = new Point(x, y);
+        points.Add(currentPos, c);
         if (isDigit(c))
         {
-            currentNumber *= 10;
-            currentNumber += getDigit(c);
-            currentNumberPositions.Add(new Point(x, y));
+            currentNumber.AddDigit(getDigit(c), currentPos);
         }
         else
         {
-            if (currentNumberPositions.Count > 0)
+            if (!currentNumber.IsEmpty())
             {
-                numbers.Add(currentNumberPositions, currentNumber);
-                currentNumber = 0;
-                currentNumberPositions = new List<Point>();
+                numbers.Add(currentNumber);
+                currentNumber = new Number();
             }
         }
         ++x;
     }
-    if (currentNumberPositions.Count > 0)
+    if (!currentNumber.IsEmpty())
     {
-        numbers.Add(currentNumberPositions, currentNumber);
-        currentNumber = 0;
-        currentNumberPositions = new List<Point>();
+        numbers.Add(currentNumber);
     }
     ++y;
 }
@@ -52,7 +45,6 @@ IEnumerable<Point> neighbours(Point point)
 {
     return adjacent.Select(d => d + point);
 }
-
 
 static bool isDigit(char c)
 {
@@ -76,21 +68,57 @@ static bool isSymbol(char c)
     return c != '.' && !isDigit(c);
 }
 
-Console.WriteLine(numbers.Where(number => number.Key.SelectMany(p => neighbours(p)).Any(n => isSymbol(points.GetOrElse(n, '.')))).Select(p => p.Value).Sum());
-
-IEnumerable<KeyValuePair<List<Point>, int>> numberNeighbours(Point point)
+bool nextToSymbol(Point p)
 {
-    return numbers.Where(n => n.Key.SelectMany(neighbours).Any(numberNeighbour => numberNeighbour == point));
+    return neighbours(p).Any(n => isSymbol(points.GetOrElse(n, '.')));
 }
 
-var gears = points.Where(p => p.Value == '*').Where(p => numberNeighbours(p.Key).Count() == 2);
+bool isPartNumber(Number n)
+{
+    return n.GetPosition().Any(nextToSymbol);
+}
 
-Console.WriteLine(gears.Select(g => numberNeighbours(g.Key).Select(number => number.Value).Aggregate(1, (a, b) => a * b)).Sum());
+Console.WriteLine(numbers.Where(isPartNumber).Select(n => n.Value()).Sum());
+
+IEnumerable<Number> adjacentNumbers(Point point)
+{
+    return numbers.Where(n => n.GetPosition().SelectMany(neighbours).Any(adjacentPos => adjacentPos == point));
+}
+
+var gears = points.Where(p => p.Value == '*').Where(p => adjacentNumbers(p.Key).Count() == 2);
+
+Console.WriteLine(gears.Select(g => adjacentNumbers(g.Key).Select(number => number.Value()).Aggregate(1, (a, b) => a * b)).Sum());
 
 public record Point(int x, int y)
 {
     public static Point operator+(Point a, Point b)
     {
         return new Point(a.x + b.x, a.y + b.y);
+    }
+}
+
+public record Number() {
+    private int _Value = 0;
+    private List<Point> _Position = new List<Point>();
+    public void AddDigit(int d, Point position)
+    {
+        _Position.Add(position);
+        _Value *= 10;
+        _Value += d;
+    }
+
+    public int Value()
+    {
+        return _Value;
+    }
+
+    public IEnumerable<Point> GetPosition()
+    {
+        return _Position;
+    }
+
+    public bool IsEmpty()
+    {
+        return _Position.Count == 0;
     }
 }
