@@ -121,7 +121,7 @@ Console.WriteLine($"Sum of part numbers for part 1: {numbers.Where(isPartNumber)
 
 // Find gears
 
-var gears = symbols.Where(s => s.IsSymbol('*')).Where(s => neighbours(s).Where(n => n.IsNumber()).Count() == 2);
+var gears = symbols.Where(s => s.IsSymbol('*')).Where(s => neighbours(s).Count(n => n.IsNumber()) == 2);
 
 // Solve part 2
 
