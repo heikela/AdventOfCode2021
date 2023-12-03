@@ -50,11 +50,13 @@ foreach (string line in lines)
         }
         else
         {
+            // Save number if we've just finished one
             if (!currentNumber.IsEmpty())
             {
                 numbers.Add(currentNumber);
                 currentNumber = new Number();
             }
+            // Save a symbol if we've found one
             if (isSymbol(c))
             {
                 symbols.Add(new Symbol(c, currentPos));
@@ -62,6 +64,7 @@ foreach (string line in lines)
         }
         ++x;
     }
+    // Save a number at the end of the line if needed
     if (!currentNumber.IsEmpty())
     {
         numbers.Add(currentNumber);
@@ -114,7 +117,7 @@ bool isPartNumber(Number n)
 
 // Solve part 1
 
-Console.WriteLine(numbers.Where(isPartNumber).Select(n => n.Value()).Sum());
+Console.WriteLine($"Sum of part numbers for part 1: {numbers.Where(isPartNumber).Select(n => n.Value()).Sum()}");
 
 // Find gears
 
@@ -122,7 +125,8 @@ var gears = symbols.Where(s => s.IsSymbol('*')).Where(s => neighbours(s).Where(n
 
 // Solve part 2
 
-Console.WriteLine(gears.Select(g => neighbours(g).Where(n => n.IsNumber()).Select(number => number.Value()).Aggregate(1, (a, b) => a * b)).Sum());
+var gearRatioSum = gears.Select(g => neighbours(g).Where(n => n.IsNumber()).Select(number => number.Value()).Aggregate(1, (a, b) => a * b)).Sum();
+Console.WriteLine($"Sum of gear ratios for part 2: {gearRatioSum}");
 
 // Classes to encapsulate some of the data and operations
 public record Point(int x, int y)
