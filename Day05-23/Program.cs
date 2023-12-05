@@ -1,7 +1,7 @@
 ﻿using Common;
 
-string fileName = "../../../testInput.txt";
-//string fileName = "../../../input.txt";
+//string fileName = "../../../testInput.txt";
+string fileName = "../../../input.txt";
 
 var sections = File.ReadAllLines(fileName).Paragraphs();
 
@@ -137,7 +137,7 @@ public class Mapping
         while (remainingRanges.Count > 0)
         {
             var rangeToProcess = remainingRanges.Pop();
-            var applicableMappings = Ranges.Keys.Where(r => r.Intersects(range));
+            var applicableMappings = Ranges.Keys.Where(r => r.Intersects(rangeToProcess));
             if (applicableMappings.Any())
             {
                 Range source = applicableMappings.First();
@@ -153,5 +153,6 @@ public class Mapping
                 yield return rangeToProcess;
             }
         }
+        yield break;
     }
 }
