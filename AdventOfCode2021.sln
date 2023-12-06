@@ -93,6 +93,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day04-23", "Day04-23\Day04-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day05-23", "Day05-23\Day05-23.csproj", "{BE80AE60-26EF-4AD8-8B57-F935EA40DEC0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day06-23", "Day06-23\Day06-23.csproj", "{0D92F205-F4A3-46A7-B2F8-E1EC15D0E71D}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{004ca17f-463c-421d-95f5-483b5b193481}*SharedItemsImports = 5
@@ -308,6 +310,10 @@ Global
 		{BE80AE60-26EF-4AD8-8B57-F935EA40DEC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE80AE60-26EF-4AD8-8B57-F935EA40DEC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE80AE60-26EF-4AD8-8B57-F935EA40DEC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D92F205-F4A3-46A7-B2F8-E1EC15D0E71D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D92F205-F4A3-46A7-B2F8-E1EC15D0E71D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D92F205-F4A3-46A7-B2F8-E1EC15D0E71D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D92F205-F4A3-46A7-B2F8-E1EC15D0E71D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
