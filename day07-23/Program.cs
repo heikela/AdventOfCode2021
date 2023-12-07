@@ -42,34 +42,39 @@ int cardNumberWithJokers(char card)
     }
 }
 
-int handType(IEnumerable<char> cards)
+int handTypeFromCardCounts(List<int> descendingCounts)
 {
-    var cardGroups = cards.GroupBy(c => c).OrderByDescending(grouping => grouping.Count()).ToList();
-    if (cardGroups[0].Count() == 5)
+    if (descendingCounts[0] == 5)
     {
         return 7;
     }
-    if (cardGroups[0].Count() == 4)
+    if (descendingCounts[0] == 4)
     {
         return 6;
     }
-    if (cardGroups[0].Count() == 3 && cardGroups[1].Count() == 2)
+    if (descendingCounts[0] == 3 && descendingCounts[1] == 2)
     {
         return 5;
     }
-    if (cardGroups[0].Count() == 3)
+    if (descendingCounts[0] == 3)
     {
         return 4;
     }
-    if (cardGroups[0].Count() == 2 && cardGroups[1].Count() == 2)
+    if (descendingCounts[0] == 2 && descendingCounts[1] == 2)
     {
         return 3;
     }
-    if (cardGroups[0].Count() == 2)
+    if (descendingCounts[0] == 2)
     {
         return 2;
     }
     return 1;
+}
+
+int handType(IEnumerable<char> cards)
+{
+    var cardGroups = cards.GroupBy(c => c).Select(grouping => grouping.Count()).OrderByDescending(n => n).ToList();
+    return handTypeFromCardCounts(cardGroups);
 }
 
 int handTypeWithJokers(IEnumerable<char> cards)
@@ -78,36 +83,14 @@ int handTypeWithJokers(IEnumerable<char> cards)
     var cardGroups = cards.Where(c => c != 'J').GroupBy(c => c).Select(g => g.Count()).OrderByDescending(n => n).ToList();
     if (jokers == 5)
     {
-        return 7;
+        cardGroups.Add(5);
     }
-    cardGroups[0] += jokers;
-    if (cardGroups[0] == 5)
+    else
     {
-        return 7;
+        cardGroups[0] += jokers;
     }
-    if (cardGroups[0] == 4)
-    {
-        return 6;
-    }
-    if (cardGroups[0] == 3 && cardGroups[1] == 2)
-    {
-        return 5;
-    }
-    if (cardGroups[0] == 3)
-    {
-        return 4;
-    }
-    if (cardGroups[0] == 2 && cardGroups[1] == 2)
-    {
-        return 3;
-    }
-    if (cardGroups[0] == 2)
-    {
-        return 2;
-    }
-    return 1;
+    return handTypeFromCardCounts(cardGroups);
 }
-
 
 int handPower(string hand)
 {
