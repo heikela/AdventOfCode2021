@@ -91,15 +91,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day03-23", "Day03-23\Day03-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day04-23", "Day04-23\Day04-23.csproj", "{71139096-EF26-4DBA-BBCF-811732490D21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day05-23", "Day05-23\Day05-23.csproj", "{BE80AE60-26EF-4AD8-8B57-F935EA40DEC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day05-23", "Day05-23\Day05-23.csproj", "{BE80AE60-26EF-4AD8-8B57-F935EA40DEC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day06-23", "Day06-23\Day06-23.csproj", "{0D92F205-F4A3-46A7-B2F8-E1EC15D0E71D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day06-23", "Day06-23\Day06-23.csproj", "{0D92F205-F4A3-46A7-B2F8-E1EC15D0E71D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day07-23", "day07-23\day07-23.csproj", "{FC6C9ECF-D7A4-40C9-9CC8-3EF4993F3CFA}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{004ca17f-463c-421d-95f5-483b5b193481}*SharedItemsImports = 5
 		Common\Common.projitems*{021b67a2-c592-458f-b4e3-634d9573ea62}*SharedItemsImports = 5
 		Common\Common.projitems*{094ebfed-f33e-479c-a14c-8e8751cd1701}*SharedItemsImports = 5
+		Common\Common.projitems*{0d92f205-f4a3-46a7-b2f8-e1ec15d0e71d}*SharedItemsImports = 5
 		Common\Common.projitems*{107b5e01-9603-4e24-a0fa-f42255c186a9}*SharedItemsImports = 5
 		Common\Common.projitems*{22cd4fd4-e3ca-473e-999b-6f8889eab101}*SharedItemsImports = 13
 		Common\Common.projitems*{2d454e45-b17e-4738-829d-7dba91353289}*SharedItemsImports = 5
@@ -128,6 +131,7 @@ Global
 		Common\Common.projitems*{ef358d5d-8493-42a5-a237-57c1d176784e}*SharedItemsImports = 5
 		Common\Common.projitems*{f00c241b-96fd-45aa-957e-972d42dc67ed}*SharedItemsImports = 5
 		Common\Common.projitems*{faae3cd5-2b29-4108-8996-6e77aead9f88}*SharedItemsImports = 5
+		Common\Common.projitems*{fc6c9ecf-d7a4-40c9-9cc8-3ef4993f3cfa}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -314,6 +318,10 @@ Global
 		{0D92F205-F4A3-46A7-B2F8-E1EC15D0E71D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D92F205-F4A3-46A7-B2F8-E1EC15D0E71D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D92F205-F4A3-46A7-B2F8-E1EC15D0E71D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC6C9ECF-D7A4-40C9-9CC8-3EF4993F3CFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC6C9ECF-D7A4-40C9-9CC8-3EF4993F3CFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC6C9ECF-D7A4-40C9-9CC8-3EF4993F3CFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC6C9ECF-D7A4-40C9-9CC8-3EF4993F3CFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
