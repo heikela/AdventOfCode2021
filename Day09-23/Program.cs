@@ -49,17 +49,5 @@ int extrapolate(IEnumerable<int> original)
     }
 }
 
-int extrapolateBack(IEnumerable<int> original)
-{
-    if (differences(original).All(isZero))
-    {
-        return original.First();
-    }
-    else
-    {
-        return original.First() - extrapolateBack(differences(original));
-    }
-}
-
-Console.WriteLine("Part2: " + lines.Select(parseLine).Sum(extrapolateBack));
-Console.WriteLine(lines.Select(parseLine).Sum(extrapolate));
+Console.WriteLine($"Part 1: {lines.Select(parseLine).Sum(extrapolate)}");
+Console.WriteLine($"Part 2: {lines.Select(parseLine).Select(numbers => numbers.Reverse()).Sum(extrapolate)}");
