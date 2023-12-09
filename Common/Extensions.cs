@@ -55,7 +55,7 @@ namespace Common
             yield break;
         }
 
-        public static IEnumerable<TElem> ProcessAdjacent<TElem>(this IEnumerable<TElem> sequence, Func<TElem, TElem, TElem> selector)
+        public static IEnumerable<TResult> ProcessAdjacent<TElem, TResult>(this IEnumerable<TElem> sequence, Func<TElem, TElem, TResult> selector)
         {
             IEnumerator<TElem> iterator = sequence.GetEnumerator();
             if (!iterator.MoveNext())
