@@ -12,7 +12,23 @@ IEnumerable<int> parseLine(string line)
 
 IEnumerable<int> differences(IEnumerable<int> original)
 {
-    return original.Zip(original.Skip(1)).Select(pair => pair.Item2 - pair.Item1);
+    return processAdjacent(original, (a, b) => b - a);
+}
+
+IEnumerable<T> processAdjacent<T>(IEnumerable<T> sequence, Func<T, T, T> selector)
+{
+    IEnumerator<T> iterator = sequence.GetEnumerator();
+    if (!iterator.MoveNext())
+    {
+        yield break;
+    }
+    T prev = iterator.Current;
+    while (iterator.MoveNext())
+    {
+        T current = iterator.Current;
+        yield return selector(prev, current);
+        prev = current;
+    }
 }
 
 bool isZero(int n)
@@ -22,13 +38,14 @@ bool isZero(int n)
 
 int extrapolate(IEnumerable<int> original)
 {
-    if (differences(original).All(isZero))
+    IEnumerable<int> diff = differences(original);
+    if (diff.All(isZero))
     {
         return original.Last();
     }
     else
     {
-        return original.Last() + extrapolate(differences(original));
+        return original.Last() + extrapolate(diff);
     }
 }
 
