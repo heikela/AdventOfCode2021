@@ -55,6 +55,22 @@ namespace Common
             yield break;
         }
 
+        public static IEnumerable<TElem> ProcessAdjacent<TElem>(this IEnumerable<TElem> sequence, Func<TElem, TElem, TElem> selector)
+        {
+            IEnumerator<TElem> iterator = sequence.GetEnumerator();
+            if (!iterator.MoveNext())
+            {
+                yield break;
+            }
+            TElem prev = iterator.Current;
+            while (iterator.MoveNext())
+            {
+                TElem current = iterator.Current;
+                yield return selector(prev, current);
+                prev = current;
+            }
+        }
+
         public static IEnumerable<List<string>> Paragraphs(this IEnumerable<string> lines)
         {
             return lines.SplitBy(s => s.Trim().Length == 0);
