@@ -133,7 +133,6 @@ void trackFurthest(Point point, Graph<Point>.VisitPath path)
 pipe.BfsFrom(startPos, trackFurthest);
 
 HashSet<Point> partOfLoop = new HashSet<Point>();
-partOfLoop.Add(startPos);
 void AddToLoop(Point point, Graph<Point>.VisitPath path)
 {
     partOfLoop.Add(point);
@@ -177,7 +176,6 @@ void processPotentialInterior(Point current, Point inwards)
     //Console.WriteLine($"Searching from {candidate}");
     if (!interior.Contains(candidate) && !partOfLoop.Contains(candidate))
     {
-        interior.Add(candidate);
         potentialInterior.BfsFrom(candidate, addToInterior);
     }
 }
