@@ -1,13 +1,11 @@
 ﻿using Common;
+using System.Diagnostics;
 
 //string fileName = "../../../testInput.txt";
-//char S = 'F';
 
 string fileName = "../../../input.txt";
-char S = 'L';
 
 //string fileName = "../../../p2test1.txt";
-//char S = 'F';
 
 string[] lines = File.ReadAllLines(fileName).ToArray();
 
@@ -27,13 +25,11 @@ foreach (var line in lines)
     int x = 0;
     foreach (char c in line)
     {
-        char scanForPoint = c;
         if (c == 'S')
         {
             startPos = new Point(x, y);
-            scanForPoint = S;
         }
-        scan.Add(new Point(x, y), scanForPoint);
+        scan.Add(new Point(x, y), c);
         ++x;
     }
     ++y;
@@ -41,11 +37,7 @@ foreach (var line in lines)
 
 IEnumerable<Point> neighbours(Point point)
 {
-    char c = scan[point];
-    if (c == 'S')
-    {
-        c = S;
-    }
+    char c = scan.GetOrElse(point, '.');
     return neighbourDirections(c).Select(d => d + point);
 }
 
@@ -81,6 +73,47 @@ IEnumerable<Point> neighbourDirections(char c)
             yield break;
     }
 }
+
+char determinePipeAtStart()
+{
+    List<Point> neighbourDirections = directions.Where(d => neighbours(startPos + d).Contains(startPos)).ToList();
+    Debug.Assert(neighbourDirections.Count == 2);
+    if (neighbourDirections.Contains(up))
+    {
+        if (neighbourDirections.Contains(left))
+        {
+            return 'J';
+        }
+        else if (neighbourDirections.Contains(down))
+        {
+            return '|';
+        }
+        else if (neighbourDirections.Contains(right))
+        {
+            return 'L';
+        }
+    }
+    else if (neighbourDirections.Contains(left))
+    {
+        if (neighbourDirections.Contains(down))
+        {
+            return '7';
+        }
+        else if (neighbourDirections.Contains(right))
+        {
+            return '-';
+        }
+    }
+    else
+    {
+        Debug.Assert(neighbourDirections.Contains(down));
+        Debug.Assert(neighbourDirections.Contains(right));
+        return 'F';
+    }
+    throw new ArgumentOutOfRangeException($"Invalid neighbours {neighbourDirections}");
+}
+
+scan[startPos] = determinePipeAtStart();
 
 Point furthestPoint = startPos;
 int furthestDistance = 0;
