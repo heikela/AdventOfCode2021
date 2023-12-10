@@ -199,13 +199,13 @@ for (y = 0; y < size; ++y)
 }
 
 
-Point bottomLeft = partOfLoop.OrderBy(p => -p.Y * 150 + p.X).First();
+Point topLeft = partOfLoop.OrderBy(p => p.Y * 150 + p.X).First();
 //Console.WriteLine($"Bottom left = {bottomLeft}");
-Point current = bottomLeft + up;
+Point current = topLeft + down;
 Point inwards = right;
 
 bool done = false;
-visited.Add(bottomLeft);
+visited.Add(topLeft);
 while (!done)
 {
 //    Console.WriteLine($"Following the pipe at {current}, finding {scan[current]}");
