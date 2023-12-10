@@ -2,8 +2,12 @@
 
 //string fileName = "../../../testInput.txt";
 //char S = 'F';
+
 string fileName = "../../../input.txt";
 char S = 'L';
+
+//string fileName = "../../../p2test1.txt";
+//char S = 'F';
 
 string[] lines = File.ReadAllLines(fileName).ToArray();
 
@@ -11,6 +15,8 @@ Point left = new Point(-1, 0);
 Point up = new Point(0, -1);
 Point right = new Point(1, 0);
 Point down = new Point(0, 1);
+
+List<Point> directions = new List<Point>() { left, up, right, down };
 
 Point startPos = new Point(-1, -1);
 
@@ -21,11 +27,13 @@ foreach (var line in lines)
     int x = 0;
     foreach (char c in line)
     {
-        scan.Add(new Point(x, y), c);
+        char scanForPoint = c;
         if (c == 'S')
         {
             startPos = new Point(x, y);
+            scanForPoint = S;
         }
+        scan.Add(new Point(x, y), scanForPoint);
         ++x;
     }
     ++y;
@@ -91,7 +99,148 @@ void trackFurthest(Point point, Graph<Point>.VisitPath path)
 
 pipe.BfsFrom(startPos, trackFurthest);
 
+HashSet<Point> partOfLoop = new HashSet<Point>();
+partOfLoop.Add(startPos);
+void AddToLoop(Point point, Graph<Point>.VisitPath path)
+{
+    partOfLoop.Add(point);
+}
+
+pipe.BfsFrom(startPos, AddToLoop);
+
+HashSet<Point> visited = new HashSet<Point>();
+HashSet<Point> interior = new HashSet<Point>();
+
+IEnumerable<Point> potentialInteriorNeighbours(Point point)
+{
+    foreach (Point p in directions.Select(d => d + point))
+    {
+        if (!partOfLoop.Contains(p))
+        {
+            yield return p;
+        }
+    }
+}
+
+Graph<Point> potentialInterior = new GraphByFunction<Point>(potentialInteriorNeighbours);
+
+void addToInterior(Point p, GraphByFunction<Point>.VisitPath path)
+{
+    if (!scan.ContainsKey(p))
+    {
+        throw new ArgumentOutOfRangeException($"Interior is not interior, trying to add {p}");
+    }
+    interior.Add(p);
+    //Console.WriteLine($"Adding {p}");
+}
+
+void processPotentialInterior(Point current, Point inwards)
+{
+    if (!scan.ContainsKey(current))
+    {
+        throw new ArgumentOutOfRangeException($"Invalid current point {current}");
+    }
+    Point candidate = current + inwards;
+    //Console.WriteLine($"Searching from {candidate}");
+    if (!interior.Contains(candidate) && !partOfLoop.Contains(candidate))
+    {
+        interior.Add(candidate);
+        potentialInterior.BfsFrom(candidate, addToInterior);
+    }
+}
+
+int size = lines.Length;
+for (y = 0; y < size; ++y)
+{
+    for (int x = 0; x < size; ++x)
+    {
+        char c = '.';
+        Point pos = new Point(x, y);
+        if (partOfLoop.Contains(pos))
+        {
+            c = scan[pos];
+        }
+        Console.Write(c);
+    }
+    Console.WriteLine();
+}
+
+
+Point bottomLeft = partOfLoop.OrderBy(p => -p.Y * 150 + p.X).First();
+//Console.WriteLine($"Bottom left = {bottomLeft}");
+Point current = bottomLeft + up;
+Point inwards = right;
+
+bool done = false;
+visited.Add(bottomLeft);
+while (!done)
+{
+//    Console.WriteLine($"Following the pipe at {current}, finding {scan[current]}");
+    visited.Add(current);
+    processPotentialInterior(current, inwards);
+    switch (scan[current])
+    {
+        case 'J':
+        case 'F':
+//            Console.WriteLine($"Turning based on {scan[current]}");
+//            Console.WriteLine($"From inwards = {inwards}");
+            if (inwards == up)
+            {
+                inwards = left;
+            }
+            else if (inwards == left)
+            {
+                inwards = up;
+            }
+            else if (inwards == right)
+            {
+                inwards = down;
+            }
+            else if (inwards == down)
+            {
+                inwards = right;
+            }
+//            Console.WriteLine($"To inwards = {inwards}");
+            break;
+        case '7':
+        case 'L':
+//            Console.WriteLine($"Turning based on {scan[current]}");
+//            Console.WriteLine($"From inwards = {inwards}");
+            if (inwards == up)
+            {
+                inwards = right;
+            }
+            else if (inwards == right)
+            {
+                inwards = up;
+            }
+            else if (inwards == left)
+            {
+                inwards = down;
+            }
+            else if (inwards == down)
+            {
+                inwards = left;
+            }
+//            Console.WriteLine($"To inwards = {inwards}");
+            break;
+        default:
+            break;
+    }
+    processPotentialInterior(current, inwards);
+    var next = neighbours(current).Where(p => !visited.Contains(p));
+    if (!next.Any())
+    {
+        done = true;
+    }
+    else
+    {
+        current = next.First();
+    }
+}
+
 Console.WriteLine($"The furthest point in the loop is at a distance of {furthestDistance}");
+Console.WriteLine($"Interior of the loop is size {interior.Count}");
 
 public record Point(int X, int Y)
 {
