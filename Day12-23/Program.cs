@@ -11,203 +11,14 @@ var bigRecords = records.Select(r => r.FiveFold());
 Dictionary<SpringRecord, int> known = new Dictionary<SpringRecord, int>();
 Dictionary<IndexPair, long> known2 = new Dictionary<IndexPair, long>();
 
-bool CanFit(SpringRecord record)
-{
-    int startPos = 0;
-    int runPos = 0;
-    while (runPos < record.BrokenRuns.Length)
-    {
-        int runLength = record.BrokenRuns[runPos];
-        bool found = false;
-        while (!found)
-        {
-            while (startPos < record.IndividualNotes.Length && record.IndividualNotes[startPos] == '.')
-            {
-                startPos++;
-            }
-            if (startPos >= record.IndividualNotes.Length)
-            {
-                return false;
-            }
-            found = true;
-            for (int i = 0; i < runLength; i++)
-            {
-                if (startPos + i >= record.IndividualNotes.Length)
-                {
-                    return false;
-                }
-                if (record.IndividualNotes[startPos + i] == '.')
-                {
-                    found = false;
-                    startPos = startPos + i + 1;
-                    break;
-                }
-            }
-        }
-        runPos++;
-    }
-    return true;
-}
-
-
-int CountPossibleArrangements(SpringRecord record)
-{
-    if (IsMemoized(record))
-    {
-        return GetMemoized(record);
-    }
-    int minLenght = record.BrokenRuns.Sum() + record.BrokenRuns.Length - 1;
-    if (record.IndividualNotes.Length < minLenght)
-    {
-        //          Console.WriteLine($"{IndividualNotes} {String.Join(',', BrokenRuns.Select(n => n.ToString()))}   ===>   {0}");
-        Memoize(record, 0);
-        return 0;
-    }
-    if (!CanFit(record))
-    {
-        //            Console.WriteLine($"{IndividualNotes} {String.Join(',', BrokenRuns.Select(n => n.ToString()))}   ===>   {0}");
-        Memoize(record, 0);
-        return 0;
-    }
-    int charPos = 0;
-    int runPos = 0;
-    while (charPos < record.IndividualNotes.Length)
-    {
-
-        if (record.IndividualNotes[charPos] == '.')
-        {
-            charPos++;
-        }
-        else if (record.IndividualNotes[charPos] == '#')
-        {
-            if (runPos >= record.BrokenRuns.Length)
-            {
-                //                    Console.WriteLine($"{IndividualNotes} {String.Join(',', BrokenRuns.Select(n => n.ToString()))}   ===>   {0}");
-                Memoize(record, 0);
-                return 0;
-            }
-            int runLength = record.BrokenRuns[runPos];
-            runPos++;
-            while (runLength > 0)
-            {
-                if (charPos >= record.IndividualNotes.Length || record.IndividualNotes[charPos] == '.')
-                {
-                    //                        Console.WriteLine($"{IndividualNotes} {String.Join(',', BrokenRuns.Select(n => n.ToString()))}   ===>   {0}");
-                    Memoize(record, 0);
-                    return 0;
-                }
-                charPos++;
-                runLength--;
-            }
-            if (charPos == record.IndividualNotes.Length)
-            {
-                if (runPos == record.BrokenRuns.Length)
-                {
-                    //                    Console.WriteLine($"{IndividualNotes} {String.Join(',', BrokenRuns.Select(n => n.ToString()))}   ===>   {1}");
-                    Memoize(record, 1);
-                    return 1;
-                }
-                else
-                {
-                    //                    Console.WriteLine($"{IndividualNotes} {String.Join(',', BrokenRuns.Select(n => n.ToString()))}   ===>   {0}");
-                    Memoize(record, 0);
-                    return 0;
-                }
-            }
-            if (record.IndividualNotes[charPos] != '#')
-            {
-                charPos++;
-            }
-            else
-            {
-                //                    Console.WriteLine($"{IndividualNotes} {String.Join(',', BrokenRuns.Select(n => n.ToString()))}   ===>   {0}");
-                Memoize(record, 0);
-                return 0;
-            }
-        }
-        else if (record.IndividualNotes[charPos] == '?')
-        {
-            /*
-                            if (IndividualNotes == "?" && BrokenRuns.Count == 1 && BrokenRuns[0] == 1)
-                            {
-                                Console.WriteLine("Error case?");
-                            }
-            */
-            bool brokenIsPossible = runPos < record.BrokenRuns.Length;
-            int posIfBroken = charPos;
-            int runLength = brokenIsPossible ? record.BrokenRuns[runPos] : 0;
-            while (runLength > 0)
-            {
-                if (posIfBroken >= record.IndividualNotes.Length)
-                {
-                    brokenIsPossible = false;
-                    break;
-                }
-                if (record.IndividualNotes[posIfBroken] == '.')
-                {
-                    brokenIsPossible = false;
-                    break;
-                }
-                posIfBroken++;
-                runLength--;
-            }
-            if (brokenIsPossible && posIfBroken < record.IndividualNotes.Length)
-            {
-                if (record.IndividualNotes[posIfBroken] == '#')
-                {
-                    brokenIsPossible = false;
-                }
-                posIfBroken++;
-            }
-            if (!brokenIsPossible)
-            {
-                charPos++;
-            }
-            else
-            {
-                int result = CountPossibleArrangements(new SpringRecord(record.IndividualNotes.Substring(charPos + 1), record.BrokenRuns.Skip(runPos).ToArray())) +
-                    CountPossibleArrangements(new SpringRecord(record.IndividualNotes.Substring(posIfBroken), record.BrokenRuns.Skip(runPos + 1).ToArray()));
-                //                    Console.WriteLine($"{IndividualNotes} {String.Join(',', BrokenRuns.Select(n => n.ToString()))}   ===>   {result}");
-                Memoize(record, result);
-                return result;
-            }
-        }
-    }
-    if (runPos != record.BrokenRuns.Length)
-    {
-        //            Console.WriteLine($"{IndividualNotes} {String.Join(',', BrokenRuns.Select(n => n.ToString()))}   ===>   {0}");
-        Memoize(record, 0);
-        return 0;
-    }
-    //        Console.WriteLine($"{IndividualNotes} {String.Join(',', BrokenRuns.Select(n => n.ToString()))}   ===>   {1}");
-    Memoize(record, 1);
-    return 1;
-}
 
 long sum1 = 0;
 foreach (var record in records)
 {
     long result = CountArrangements2(record);
     sum1 += result;
-    Console.WriteLine($"{record}   ===>   {result}");
 }
 Console.WriteLine($"Part 1 : {sum1}");
-
-void Memoize(SpringRecord record, int result)
-{
-
-    //known[record] = result;
-}
-
-bool IsMemoized(SpringRecord record)
-{
-    return false; // known.ContainsKey(record);
-}
-
-int GetMemoized(SpringRecord record)
-{
-    return known[record];
-}
 
 long Memoize2(IndexPair x, long result)
 {
@@ -334,24 +145,15 @@ long CountArrangements2(SpringRecord record)
     return CountArrangementsRec(record, 0, 0, nextPossibleRunStart, lastPossibleStartByRunIndex);
 }
 
-//Debug.Assert(CountArrangements2(new SpringRecord("", new int[] {})) == 1);
-Debug.Assert(CountArrangements2(new SpringRecord("", new int[] { 1 })) == 0);
-Debug.Assert(CountArrangements2(new SpringRecord(".", new int[] { 1 })) == 0);
-//Debug.Assert(CountArrangements2(new SpringRecord(".", new int[] {})) == 1);
-Debug.Assert(CountArrangements2(new SpringRecord("#", new int[] { 1 })) == 1);
-//Debug.Assert(CountArrangements2(new SpringRecord("#", new int[] {})) == 0);
-Debug.Assert(CountArrangements2(new SpringRecord("??", new int[] {1})) == 2);
-
 long sum = 0;
 foreach (var record in bigRecords)
 {
     long result = CountArrangements2(record);
     sum += result;
-    Console.WriteLine(result);
 }
+Debug.Assert(sum == 157383940585037);
 
 Console.WriteLine("Part 2 result " + sum);
-// 157385579854051 is too high
 
 public record SpringRecord(string IndividualNotes, int[] BrokenRuns)
 {
