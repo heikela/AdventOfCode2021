@@ -301,11 +301,11 @@ long CountArrangementsRec(SpringRecord record, int pos, int runIndex, Dictionary
 
 long CountArrangements2(SpringRecord record)
 {
-    int longestRun = record.BrokenRuns.Max();
+    List<int> relevantLengths = record.BrokenRuns.ToHashSet().OrderBy(x => x).ToList();
     Dictionary<FastForwardKey, int> nextPossibleRunStart = new Dictionary<FastForwardKey, int>();
     for (int pos = 0; pos < record.IndividualNotes.Length; pos++)
     {
-        for (int runLength = 1; runLength <= longestRun; runLength++)
+        foreach (int runLength in relevantLengths)
         {
             int candidate = pos;
             FastForwardKey key = new FastForwardKey(pos, runLength);
