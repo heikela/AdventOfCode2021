@@ -8,10 +8,6 @@ string[] lines = File.ReadAllLines(fileName).ToArray();
 SpringRecord[] records = lines.Select(SpringRecord.Parse).ToArray();
 var bigRecords = records.Select(r => r.FiveFold());
 
-Dictionary<SpringRecord, int> known = new Dictionary<SpringRecord, int>();
-Dictionary<IndexPair, long> known2 = new Dictionary<IndexPair, long>();
-
-
 Console.WriteLine($"Part 1 : {records.Sum(r => r.CountArrangements())}");
 long sum = bigRecords.Sum(r => r.CountArrangements());
 Console.WriteLine($"Part 2 : {sum}");
