@@ -118,10 +118,10 @@ public class SpringRecord
 
     public long CountArrangements()
     {
-        return SolveSubproblemOuter(new IndexPair(0, 0));
+        return SolveAndMemoizeSubproblem(new IndexPair(0, 0));
     }
 
-    private long SolveSubproblemOuter(IndexPair subProblemState)
+    private long SolveAndMemoizeSubproblem(IndexPair subProblemState)
     {
         if (IsMemoized(subProblemState))
         {
@@ -129,13 +129,13 @@ public class SpringRecord
         }
         else
         {
-            long result = SolveSubproblemInner(subProblemState);
+            long result = SolveSubproblem(subProblemState);
             Memoize(subProblemState, result);
             return result;
         }
     }
 
-    private long SolveSubproblemInner(IndexPair subProblemState)
+    private long SolveSubproblem(IndexPair subProblemState)
     {
         int pos = subProblemState.stringPos;
         int runIndex = subProblemState.runPos;
@@ -168,7 +168,7 @@ public class SpringRecord
         {
             if (CanAccommodate(runLength, possibleStart))
             {
-                return SolveSubproblemOuter(new IndexPair(possibleStart + runLength + 1, runIndex + 1));
+                return SolveAndMemoizeSubproblem(new IndexPair(possibleStart + runLength + 1, runIndex + 1));
             }
             else
             {
@@ -179,13 +179,13 @@ public class SpringRecord
         {
             if (CanAccommodate(runLength, possibleStart))
             {
-                long countIfStartHere = SolveSubproblemOuter(new IndexPair(possibleStart + runLength + 1, runIndex + 1));
-                long countIfNotYet = SolveSubproblemOuter(new IndexPair(possibleStart + 1, runIndex));
+                long countIfStartHere = SolveAndMemoizeSubproblem(new IndexPair(possibleStart + runLength + 1, runIndex + 1));
+                long countIfNotYet = SolveAndMemoizeSubproblem(new IndexPair(possibleStart + 1, runIndex));
                 return countIfStartHere + countIfNotYet;
             }
             else
             {
-                return SolveSubproblemOuter(new IndexPair(possibleStart + 1, runIndex));
+                return SolveAndMemoizeSubproblem(new IndexPair(possibleStart + 1, runIndex));
             }
         }
         else
