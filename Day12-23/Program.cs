@@ -118,63 +118,74 @@ public class SpringRecord
 
     public long CountArrangements()
     {
-        return CountArrangementsRec(0, 0);
+        return SolveSubproblemOuter(new IndexPair(0, 0));
     }
 
-    long CountArrangementsRec(int pos, int runIndex)
+    private long SolveSubproblemOuter(IndexPair subProblemState)
     {
-        IndexPair args = new IndexPair(pos, runIndex);
-        if (IsMemoized(args))
+        if (IsMemoized(subProblemState))
         {
-            return GetMemoized(args);
+            return GetMemoized(subProblemState);
         }
+        else
+        {
+            long result = SolveSubproblemInner(subProblemState);
+            Memoize(subProblemState, result);
+            return result;
+        }
+    }
+
+    private long SolveSubproblemInner(IndexPair subProblemState)
+    {
+        int pos = subProblemState.stringPos;
+        int runIndex = subProblemState.runPos;
         if (runIndex == BrokenRuns.Count)
         {
             if (IndividualNotes.Substring(Math.Min(pos, IndividualNotes.Length)).Any(c => c == '#'))
             {
-                return Memoize(args, 0);
+                return 0;
             }
             else
             {
-                return Memoize(args, 1);
+                return 1;
             }
         }
         int runLength = BrokenRuns[runIndex];
         if (!NextPossibleRunStart.ContainsKey(new FastForwardKey(pos, runLength)))
         {
-            return Memoize(args, 0);
+            return 0;
         }
         int possibleStart = NextPossibleRunStart[new FastForwardKey(pos, runLength)];
         if (possibleStart == -1 || possibleStart > LastPossibleStartByRunIndex[runIndex])
         {
-            return Memoize(args, 0);
+            return 0;
         }
         else if (IndividualNotes.Substring(pos, possibleStart - pos).Any(c => c == '#'))
         {
-            return Memoize(args, 0);
+            return 0;
         }
         else if (IndividualNotes[possibleStart] == '#')
         {
             if (CanAccommodate(runLength, possibleStart))
             {
-                return Memoize(args, CountArrangementsRec(possibleStart + runLength + 1, runIndex + 1));
+                return SolveSubproblemOuter(new IndexPair(possibleStart + runLength + 1, runIndex + 1));
             }
             else
             {
-                return Memoize(args, 0);
+                return 0;
             }
         }
         else if (IndividualNotes[possibleStart] == '?')
         {
             if (CanAccommodate(runLength, possibleStart))
             {
-                long countIfStartHere = CountArrangementsRec(possibleStart + runLength + 1, runIndex + 1);
-                long countIfNotYet = CountArrangementsRec(possibleStart + 1, runIndex);
-                return Memoize(args, countIfStartHere + countIfNotYet);
+                long countIfStartHere = SolveSubproblemOuter(new IndexPair(possibleStart + runLength + 1, runIndex + 1));
+                long countIfNotYet = SolveSubproblemOuter(new IndexPair(possibleStart + 1, runIndex));
+                return countIfStartHere + countIfNotYet;
             }
             else
             {
-                return Memoize(args, CountArrangementsRec(possibleStart + 1, runIndex));
+                return SolveSubproblemOuter(new IndexPair(possibleStart + 1, runIndex));
             }
         }
         else
