@@ -17,32 +17,56 @@ long sum = bigRecords.Sum(r => r.CountArrangements());
 Console.WriteLine($"Part 2 : {sum}");
 Debug.Assert(sum == 157383940585037);
 
-public class SpringRecord
+public abstract class DynamicProgrammingProblem<TResult, TSubproblemState>
 {
-    private string IndividualNotes;
-    private List<int> BrokenRuns;
-    private Dictionary<FastForwardKey, int> NextPossibleRunStart;
-    private Dictionary<int, int> LastPossibleStartByRunIndex;
-    private Dictionary<IndexPair, long> MemoizedResult;
+    private Dictionary<TSubproblemState, TResult> MemoizedResult;
 
-    private long Memoize(IndexPair x, long result)
+    protected DynamicProgrammingProblem()
+    {
+        MemoizedResult = new Dictionary<TSubproblemState, TResult>();
+    }
+    private TResult Memoize(TSubproblemState x, TResult result)
     {
         MemoizedResult[x] = result;
         return result;
     }
 
-    private bool IsMemoized(IndexPair x)
+    private bool IsMemoized(TSubproblemState x)
     {
         return MemoizedResult.ContainsKey(x);
     }
 
-    private long GetMemoized(IndexPair x)
+    private TResult GetMemoized(TSubproblemState x)
     {
         return MemoizedResult[x];
     }
 
+    protected abstract TResult SolveSubproblem(TSubproblemState subProblemState);
 
-    private SpringRecord(string notes, IEnumerable<int> brokenRuns)
+    protected TResult SolveAndMemoizeSubproblem(TSubproblemState subProblemState)
+    {
+        if (IsMemoized(subProblemState))
+        {
+            return GetMemoized(subProblemState);
+        }
+        else
+        {
+            TResult result = SolveSubproblem(subProblemState);
+            Memoize(subProblemState, result);
+            return result;
+        }
+    }
+
+}
+
+public class SpringRecord : DynamicProgrammingProblem<long, IndexPair>
+{
+    private string IndividualNotes;
+    private List<int> BrokenRuns;
+    private Dictionary<FastForwardKey, int> NextPossibleRunStart;
+    private Dictionary<int, int> LastPossibleStartByRunIndex;
+
+    private SpringRecord(string notes, IEnumerable<int> brokenRuns) : base()
     {
         IndividualNotes = notes;
         BrokenRuns = brokenRuns.ToList();
@@ -82,8 +106,6 @@ public class SpringRecord
 
             LastPossibleStartByRunIndex[runIndex] = lastPossibleStart;
         }
-
-        MemoizedResult = new Dictionary<IndexPair, long>();
     }
 
     public static SpringRecord Parse(string line)
@@ -118,24 +140,10 @@ public class SpringRecord
 
     public long CountArrangements()
     {
-        return SolveAndMemoizeSubproblem(new IndexPair(0, 0));
+        return SolveSubproblem(new IndexPair(0, 0));
     }
 
-    private long SolveAndMemoizeSubproblem(IndexPair subProblemState)
-    {
-        if (IsMemoized(subProblemState))
-        {
-            return GetMemoized(subProblemState);
-        }
-        else
-        {
-            long result = SolveSubproblem(subProblemState);
-            Memoize(subProblemState, result);
-            return result;
-        }
-    }
-
-    private long SolveSubproblem(IndexPair subProblemState)
+    protected override long SolveSubproblem(IndexPair subProblemState)
     {
         int pos = subProblemState.stringPos;
         int runIndex = subProblemState.runPos;
