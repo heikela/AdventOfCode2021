@@ -12,23 +12,10 @@ Dictionary<SpringRecord, int> known = new Dictionary<SpringRecord, int>();
 Dictionary<IndexPair, long> known2 = new Dictionary<IndexPair, long>();
 
 
-long sum1 = 0;
-foreach (var record in records)
-{
-    long result = record.CountArrangements();
-    sum1 += result;
-}
-Console.WriteLine($"Part 1 : {sum1}");
-
-long sum = 0;
-foreach (var record in bigRecords)
-{
-    long result = record.CountArrangements();
-    sum += result;
-}
+Console.WriteLine($"Part 1 : {records.Sum(r => r.CountArrangements())}");
+long sum = bigRecords.Sum(r => r.CountArrangements());
+Console.WriteLine($"Part 2 : {sum}");
 Debug.Assert(sum == 157383940585037);
-
-Console.WriteLine("Part 2 result " + sum);
 
 public class SpringRecord
 {
