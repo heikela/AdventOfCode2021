@@ -1,8 +1,8 @@
 ﻿using Common;
 using System.Diagnostics;
 
-string fileName = "../../../testInput.txt";
-//string fileName = "../../../input.txt";
+//string fileName = "../../../testInput.txt";
+string fileName = "../../../input.txt";
 
 string[] lines = File.ReadAllLines(fileName).ToArray();
 SpringRecord[] records = lines.Select(SpringRecord.Parse).ToArray();
@@ -266,14 +266,7 @@ long CountArrangementsRec(SpringRecord record, int pos, int runIndex, Dictionary
     {
         if (record.CanAccommodate(runLength, possibleStart))
         {
-            if (runIndex == record.BrokenRuns.Length - 1)
-            {
-                return Memoize2(args, 1);
-            }
-            else
-            {
-                return Memoize2(args, CountArrangementsRec(record, possibleStart + runLength + 1, runIndex + 1, nextPossibleRunStart, lastPossibleStartByRunIndex));
-            }
+            return Memoize2(args, CountArrangementsRec(record, possibleStart + runLength + 1, runIndex + 1, nextPossibleRunStart, lastPossibleStartByRunIndex));
         }
         else
         {
@@ -309,19 +302,12 @@ long CountArrangements2(SpringRecord record)
         {
             int candidate = pos;
             FastForwardKey key = new FastForwardKey(pos, runLength);
-            while (candidate + runLength <= record.IndividualNotes.Length)
+            IEnumerable<int> possibleStarts = Enumerable.Range(pos, Math.Max(0, record.IndividualNotes.Length - runLength - pos + 1)).Where(pos => record.CanAccommodate(runLength, pos));
+            if (possibleStarts.Any())
             {
-                if (record.IndividualNotes.Substring(candidate, runLength).All(c => c != '.'))
-                {
-                    nextPossibleRunStart[key] = candidate;
-                    break;
-                }
-                else
-                {
-                    candidate++;
-                }
+                nextPossibleRunStart[key] = possibleStarts.First();
             }
-            if (!nextPossibleRunStart.ContainsKey(key))
+            else
             {
                 nextPossibleRunStart[key] = -1;
             }
