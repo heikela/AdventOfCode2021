@@ -6,6 +6,7 @@ var fileName = "../../../input.txt";
 var patterns = File.ReadAllLines(fileName).Paragraphs();
 
 Console.WriteLine($"Part 1 : {patterns.Select(Pattern.Parse).Sum(p => p.ReflectionValue().Single())}");
+Console.WriteLine($"Part 2 : {patterns.Select(Pattern.Parse).Sum(p => p.FixedReflectionValue())}");
 
 public class Pattern
 {
@@ -16,6 +17,13 @@ public class Pattern
     private Pattern()
     {
         Scan = new Dictionary<Point, char>();
+    }
+
+    private Pattern(Pattern other)
+    {
+        W = other.W;
+        H = other.H;
+        Scan = new Dictionary<Point, char>(other.Scan);
     }
 
     public static Pattern Parse(IEnumerable<string> lines)
@@ -80,6 +88,27 @@ public class Pattern
                 yield return 100 * y;
             }
         }
+    }
+
+    public int FixedReflectionValue()
+    {
+        int oldValue = ReflectionValue().Single();
+        for (int y = 0; y < H; y++)
+        {
+            for (int x = 0; x < W; x++)
+            {
+                Pattern corrected = new Pattern(this);
+                Point pos = new Point(x, y);
+                char flipped = corrected.Scan[pos] == '#' ? '.' : '#';
+                corrected.Scan[pos] = flipped;
+                IEnumerable<int> newValues = corrected.ReflectionValue().Where(val => val != oldValue);
+                if (newValues.Any())
+                {
+                    return newValues.Single();
+                }
+            }
+        }
+        throw new Exception("No solution found");
     }
 }
 
