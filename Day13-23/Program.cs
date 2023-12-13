@@ -5,7 +5,7 @@ var fileName = "../../../input.txt";
 
 var patterns = File.ReadAllLines(fileName).Paragraphs();
 
-Console.WriteLine($"Part 1 : {patterns.Select(Pattern.Parse).Sum(p => p.ReflectionValue())}");
+Console.WriteLine($"Part 1 : {patterns.Select(Pattern.Parse).Sum(p => p.ReflectionValue().Single())}");
 
 public class Pattern
 {
@@ -45,7 +45,7 @@ public class Pattern
         return string.Join("", Enumerable.Range(0, H).Select(y => Scan[new Point(x, y)]));
     }
 
-    public int ReflectionValue()
+    public IEnumerable<int> ReflectionValue()
     {
         for (int x = 1; x < W; x++)
         {
@@ -60,7 +60,7 @@ public class Pattern
             }
             if (isMirror)
             {
-                return x;
+                yield return x;
             }
         }
 
@@ -77,10 +77,9 @@ public class Pattern
             }
             if (isMirror)
             {
-                return 100 * y;
+                yield return 100 * y;
             }
         }
-        throw new Exception("No mirror found");
     }
 }
 
