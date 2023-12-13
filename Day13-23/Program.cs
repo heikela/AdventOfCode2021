@@ -45,12 +45,12 @@ public class Pattern
 
     private string GetRow(int y)
     {
-        return string.Join("", Enumerable.Range(0, W).Select(x => Scan[new Point(x, y)]));
+        return new String(Enumerable.Range(0, W).Select(x => Scan[new Point(x, y)]).ToArray());
     }
 
     private string GetColumn(int x)
     {
-        return string.Join("", Enumerable.Range(0, H).Select(y => Scan[new Point(x, y)]));
+        return new String(Enumerable.Range(0, H).Select(y => Scan[new Point(x, y)]).ToArray());
     }
 
     public IEnumerable<int> ReflectionValue()
