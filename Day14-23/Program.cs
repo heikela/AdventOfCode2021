@@ -20,31 +20,19 @@ foreach (var line in lines)
 int H = y;
 int W = lines.First().Length;
 
-bool isEmpty(Point pos) => map[pos] == '.';
+bool withinLimits(Point pos) => pos.X >= 0 && pos.X < W && pos.Y >= 0 && pos.Y < H;
 
-Dictionary<Point, char> rollNorth(Dictionary<Point, char> original)
+Dictionary<Point, char> roll(Dictionary<Point, char> original, Point direction)
 {
-    Dictionary<Point, char> result = new Dictionary<Point, char>();
-    for (int y = 0; y < H; ++y)
+    Dictionary<Point, char> result = original.Select(kv => new KeyValuePair<Point, char>(kv.Key, kv.Value == 'O' ? '.' : kv.Value)).ToDictionary();
+    foreach (Point rollingRock in original.Where(kv => kv.Value == 'O').Select(kv => kv.Key).OrderByDescending(p => p.InnerProduct(direction)))
     {
-        for (int x = 0; x < W; ++x)
+        Point newPos = rollingRock;
+        while (withinLimits(newPos + direction) && result[newPos + direction] == '.')
         {
-            Point pos = new Point(x, y);
-            if (original[pos] == 'O')
-            {
-                result.Add(pos, '.');
-                int newY = y;
-                while (newY > 0 && result[new Point(x, newY - 1)] == '.')
-                {
-                    --newY;
-                }
-                result[new Point(x, newY)] = 'O';
-            }
-            else
-            {
-                result.Add(pos, original[pos]);
-            }
+            newPos += direction;
         }
+        result[newPos] = 'O';
     }
     return result;
 }
@@ -66,11 +54,66 @@ int load(Dictionary<Point, char> map)
     return map.Where(kv => kv.Value == 'O').Sum(kv => H - kv.Key.Y);
 }
 
-Dictionary<Point, char> newMap = rollNorth(map);
+Point north = new Point(0, -1);
+Point west = new Point(-1, 0);
+Point south = new Point(0, 1);
+Point east = new Point(1, 0);
+List<Point> cycleDirections = new List<Point>() { north, west, south, east };
+
+Dictionary<Point, char> cycle(Dictionary<Point, char> map)
+{
+    return cycleDirections.Aggregate(map, (acc, direction) => roll(acc, direction));
+}
+
+IEnumerable<char> mapChars(Dictionary<Point, char> map)
+{
+    for (int y = 0; y < H; ++y)
+    {
+        for (int x = 0; x < W; ++x)
+        {
+            yield return map[new Point(x, y)];
+        }
+    }
+}
+
+string mapToString(Dictionary<Point, char> map)
+{
+    return new string(mapChars(map).ToArray());
+}
+
+Dictionary<Point, char> newMap = roll(map, north);
 //printMap(newMap);
-Console.WriteLine(load(rollNorth(map)));
+Console.WriteLine(load(roll(map, north)));
+
+Dictionary<string, int> seen = new Dictionary<string, int>();
+
+seen[mapToString(map)] = 0;
+bool cycleDetected = false;
+int cycleLength = -1;
+for (int i = 0; i < 10000; ++i)
+{
+    map = cycle(map);
+    int cycleNumber = i + 1;
+    string mapString = mapToString(map);
+    if (!cycleDetected && seen.ContainsKey(mapString))
+    {
+        cycleLength = cycleNumber - seen[mapString];
+        cycleDetected = true;
+        Console.WriteLine($"Cycle detected at {cycleNumber} with length {cycleLength}");
+    }
+    if (cycleDetected && cycleNumber % cycleLength == 1000000000 % cycleLength)
+    {
+        Console.WriteLine($"After {cycleNumber} cycles, load is {load(map)}");
+        Console.WriteLine($"This should be the same as after 1000000000 cycles");
+        break;
+    }
+    seen[mapString] = cycleNumber;
+}
+
+
 
 public record Point(int X, int Y)
 {
     public static Point operator+(Point a, Point b) => new Point(a.X + b.X, a.Y + b.Y);
+    public int InnerProduct(Point other) => X * other.X + Y * other.Y;
 }
