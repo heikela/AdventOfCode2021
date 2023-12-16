@@ -103,15 +103,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day09-23", "Day09-23\Day09-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day10-23", "Day10-23\Day10-23.csproj", "{05D90040-A760-4D95-9B28-72D8B2BD0A49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day11-23", "Day11-23\Day11-23.csproj", "{028B070F-F61E-4914-B6C7-C06B81E3A7C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day11-23", "Day11-23\Day11-23.csproj", "{028B070F-F61E-4914-B6C7-C06B81E3A7C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day12-23", "Day12-23\Day12-23.csproj", "{A02EEA65-994B-41FA-B3FD-04159CB8D8A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day12-23", "Day12-23\Day12-23.csproj", "{A02EEA65-994B-41FA-B3FD-04159CB8D8A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day13-23", "Day13-23\Day13-23.csproj", "{67A28D48-1480-4BD7-BAC4-EC2EEEFD94EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day13-23", "Day13-23\Day13-23.csproj", "{67A28D48-1480-4BD7-BAC4-EC2EEEFD94EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day14-23", "Day14-23\Day14-23.csproj", "{4450E6CB-4C55-4F12-968E-AC96AD1CF919}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day14-23", "Day14-23\Day14-23.csproj", "{4450E6CB-4C55-4F12-968E-AC96AD1CF919}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day15-23", "Day15-23\Day15-23.csproj", "{B51EAB41-0BA8-4C0E-9690-01D175AC7B3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day15-23", "Day15-23\Day15-23.csproj", "{B51EAB41-0BA8-4C0E-9690-01D175AC7B3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day16-23", "Day16-23\Day16-23.csproj", "{137EA2AF-D543-4D06-B84E-E6D3A7CF2BC8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -335,6 +337,10 @@ Global
 		{B51EAB41-0BA8-4C0E-9690-01D175AC7B3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B51EAB41-0BA8-4C0E-9690-01D175AC7B3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B51EAB41-0BA8-4C0E-9690-01D175AC7B3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{137EA2AF-D543-4D06-B84E-E6D3A7CF2BC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{137EA2AF-D543-4D06-B84E-E6D3A7CF2BC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{137EA2AF-D543-4D06-B84E-E6D3A7CF2BC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{137EA2AF-D543-4D06-B84E-E6D3A7CF2BC8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -350,6 +356,7 @@ Global
 		Common\Common.projitems*{094ebfed-f33e-479c-a14c-8e8751cd1701}*SharedItemsImports = 5
 		Common\Common.projitems*{0d92f205-f4a3-46a7-b2f8-e1ec15d0e71d}*SharedItemsImports = 5
 		Common\Common.projitems*{107b5e01-9603-4e24-a0fa-f42255c186a9}*SharedItemsImports = 5
+		Common\Common.projitems*{137ea2af-d543-4d06-b84e-e6d3a7cf2bc8}*SharedItemsImports = 5
 		Common\Common.projitems*{22cd4fd4-e3ca-473e-999b-6f8889eab101}*SharedItemsImports = 13
 		Common\Common.projitems*{2d454e45-b17e-4738-829d-7dba91353289}*SharedItemsImports = 5
 		Common\Common.projitems*{30aa56ef-28bc-48ab-80b1-72f522705dec}*SharedItemsImports = 5
