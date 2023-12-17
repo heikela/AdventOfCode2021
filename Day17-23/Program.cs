@@ -24,32 +24,27 @@ Point right = new Point(1, 0);
 Point up = new Point(0, -1);
 Point down = new Point(0, 1);
 
-State initialState = new State(new Point(0, 0), down, 0);
-State initialState2 = new State(new Point(0, 0), right, 0);
+State initialState = new State(new Point(0, 0), down);
+State initialState2 = new State(new Point(0, 0), right);
 
 IEnumerable<(State, int)> nextMoves(State state)
 {
     Point currentPos = state.Pos;
     Point currentDir = state.Dir;
-    int goneStraight = state.GoneStraight;
+    Point newPos = currentPos;
     Point leftDir = new Point(currentDir.Y, -currentDir.X);
     Point rightDir = new Point(-currentDir.Y, currentDir.X);
-    Point[] newDirs = new Point[] { currentDir, leftDir, rightDir };
-    foreach (Point newDir in newDirs)
+    int cost = 0;
+    for (int goStraight = 1; goStraight <= 3; goStraight++)
     {
-        Point newPos = currentPos + newDir;
-        if (heatLoss.ContainsKey(newPos))
+        newPos += currentDir;
+        if (!heatLoss.ContainsKey(newPos))
         {
-            int cost = heatLoss[newPos];
-            if (newDir != currentDir)
-            {
-                yield return (new State(newPos, newDir, 1), cost);
-            }
-            else if (goneStraight < 3)
-            {
-                yield return (new State(newPos, newDir, goneStraight + 1), cost);
-            }
+            break;
         }
+        cost += heatLoss[newPos];
+        yield return (new State(newPos, leftDir), cost);
+        yield return (new State(newPos, rightDir), cost);
     }
 }
 
@@ -79,31 +74,25 @@ IEnumerable<(State, int)> ultraNextMoves(State state)
 {
     Point currentPos = state.Pos;
     Point currentDir = state.Dir;
-    int goneStraight = state.GoneStraight;
+    Point newPos = currentPos;
     Point leftDir = new Point(currentDir.Y, -currentDir.X);
     Point rightDir = new Point(-currentDir.Y, currentDir.X);
-    Point[] newDirs = new Point[] { currentDir, leftDir, rightDir };
-    foreach (Point newDir in newDirs)
+    int cost = 0;
+    for (int goStraight = 1; goStraight <= 10; goStraight++)
     {
-        Point newPos = currentPos + newDir;
-        if (heatLoss.ContainsKey(newPos))
+        newPos += currentDir;
+        if (!heatLoss.ContainsKey(newPos))
         {
-            int cost = heatLoss[newPos];
-            if (newDir != currentDir && goneStraight >= 4)
-            {
-                yield return (new State(newPos, newDir, 1), cost);
-            }
-            else if (newDir == currentDir && goneStraight < 10)
-            {
-                yield return (new State(newPos, newDir, goneStraight + 1), cost);
-            }
+            break;
         }
+        cost += heatLoss[newPos];
+        if (goStraight < 4)
+        {
+            continue;
+        }
+        yield return (new State(newPos, leftDir), cost);
+        yield return (new State(newPos, rightDir), cost);
     }
-}
-
-bool ultraCanStop(State s)
-{
-    return s.GoneStraight >= 4;
 }
 
 int heuristic(State s)
@@ -113,15 +102,16 @@ int heuristic(State s)
 
 WeightedGraphByFunction<State> graph = new WeightedGraphByFunction<State>(nextMoves);
 
-int dist = graph.AStarFrom(new State[] { initialState }, heuristic, s => s.Pos == end).GetLength();
+State[] possibleStarts = new State[] { initialState, initialState2 };
+
+int dist = graph.AStarFrom(possibleStarts, heuristic, s => s.Pos == end).GetLength();
 
 Console.WriteLine($"Part 1: {dist}");
 
 
 WeightedGraphByFunction<State> ultraGraph = new WeightedGraphByFunction<State>(ultraNextMoves);
 
-State[] possibleStarts = new State[] { initialState, initialState2 };
-WeightedGraph<State>.VisitPath path = ultraGraph.AStarFrom(possibleStarts, heuristic, s => s.Pos == end && ultraCanStop(s));
+WeightedGraph<State>.VisitPath path = ultraGraph.AStarFrom(possibleStarts, heuristic, s => s.Pos == end);
 
 Console.WriteLine($"Part 2: {path.GetLength()}");
 
@@ -130,7 +120,7 @@ public record Point(int X, int Y)
     public static Point operator +(Point a, Point b) => new Point(a.X + b.X, a.Y + b.Y);
 }
 
-public record State(Point Pos, Point Dir, int GoneStraight);
+public record State(Point Pos, Point Dir);
 
 public abstract class WeightedGraph<T> where T : IEquatable<T>
 {
