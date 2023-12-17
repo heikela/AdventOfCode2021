@@ -27,7 +27,7 @@ Point down = new Point(0, 1);
 State initialState = new State(new Point(0, 0), down);
 State initialState2 = new State(new Point(0, 0), right);
 
-IEnumerable<(State, int)> nextMoves(State state)
+IEnumerable<(State, int)> GetNextMoves(State state, int maxStraight = 3, int minStraight = 1)
 {
     Point currentPos = state.Pos;
     Point currentDir = state.Dir;
@@ -35,7 +35,7 @@ IEnumerable<(State, int)> nextMoves(State state)
     Point leftDir = new Point(currentDir.Y, -currentDir.X);
     Point rightDir = new Point(-currentDir.Y, currentDir.X);
     int cost = 0;
-    for (int goStraight = 1; goStraight <= 3; goStraight++)
+    for (int goStraight = 1; goStraight <= maxStraight; goStraight++)
     {
         newPos += currentDir;
         if (!heatLoss.ContainsKey(newPos))
@@ -43,9 +43,18 @@ IEnumerable<(State, int)> nextMoves(State state)
             break;
         }
         cost += heatLoss[newPos];
+        if (goStraight < minStraight)
+        {
+            continue;
+        }
         yield return (new State(newPos, leftDir), cost);
         yield return (new State(newPos, rightDir), cost);
     }
+}
+
+Func<State, IEnumerable<(State, int)>> nextMoves(int maxStraight = 3, int minStraight = 1)
+{
+    return (state) => GetNextMoves(state, maxStraight, minStraight);
 }
 
 IEnumerable<(Point, int)> simplifiedBackwardsMoves(Point pos)
@@ -70,37 +79,12 @@ Action<Point, WeightedGraphByFunction<Point>.VisitPath> recordHeuristic = (node,
 WeightedGraphByFunction<Point> simplifiedDistance = new WeightedGraphByFunction<Point>(simplifiedBackwardsMoves);
 simplifiedDistance.DijkstraFrom(end, recordHeuristic);
 
-IEnumerable<(State, int)> ultraNextMoves(State state)
-{
-    Point currentPos = state.Pos;
-    Point currentDir = state.Dir;
-    Point newPos = currentPos;
-    Point leftDir = new Point(currentDir.Y, -currentDir.X);
-    Point rightDir = new Point(-currentDir.Y, currentDir.X);
-    int cost = 0;
-    for (int goStraight = 1; goStraight <= 10; goStraight++)
-    {
-        newPos += currentDir;
-        if (!heatLoss.ContainsKey(newPos))
-        {
-            break;
-        }
-        cost += heatLoss[newPos];
-        if (goStraight < 4)
-        {
-            continue;
-        }
-        yield return (new State(newPos, leftDir), cost);
-        yield return (new State(newPos, rightDir), cost);
-    }
-}
-
 int heuristic(State s)
 {
     return heuristicDict[s.Pos];
 }
 
-WeightedGraphByFunction<State> graph = new WeightedGraphByFunction<State>(nextMoves);
+WeightedGraphByFunction<State> graph = new WeightedGraphByFunction<State>(nextMoves());
 
 State[] possibleStarts = new State[] { initialState, initialState2 };
 
@@ -109,7 +93,7 @@ int dist = graph.AStarFrom(possibleStarts, heuristic, s => s.Pos == end).GetLeng
 Console.WriteLine($"Part 1: {dist}");
 
 
-WeightedGraphByFunction<State> ultraGraph = new WeightedGraphByFunction<State>(ultraNextMoves);
+WeightedGraphByFunction<State> ultraGraph = new WeightedGraphByFunction<State>(nextMoves(10, 4));
 
 WeightedGraph<State>.VisitPath path = ultraGraph.AStarFrom(possibleStarts, heuristic, s => s.Pos == end);
 
