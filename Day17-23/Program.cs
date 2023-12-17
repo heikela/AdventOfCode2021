@@ -53,6 +53,28 @@ IEnumerable<(State, int)> nextMoves(State state)
     }
 }
 
+IEnumerable<(Point, int)> simplifiedBackwardsMoves(Point pos)
+{
+    if (heatLoss.ContainsKey(pos + left))
+    {
+        yield return (pos + left, heatLoss[pos]);
+    }
+    if (heatLoss.ContainsKey(pos + up))
+    {
+        yield return (pos + up, heatLoss[pos]);
+    }
+}
+
+Dictionary<Point, int> heuristicDict = new Dictionary<Point, int>();
+
+Action<Point, WeightedGraphByFunction<Point>.VisitPath> recordHeuristic = (node, path) =>
+{
+    heuristicDict.Add(node, path.GetLength());
+};
+
+WeightedGraphByFunction<Point> simplifiedDistance = new WeightedGraphByFunction<Point>(simplifiedBackwardsMoves);
+simplifiedDistance.DijkstraFrom(end, recordHeuristic);
+
 IEnumerable<(State, int)> ultraNextMoves(State state)
 {
     Point currentPos = state.Pos;
@@ -84,9 +106,14 @@ bool ultraCanStop(State s)
     return s.GoneStraight >= 4;
 }
 
+int heuristic(State s)
+{
+    return heuristicDict[s.Pos];
+}
+
 WeightedGraphByFunction<State> graph = new WeightedGraphByFunction<State>(nextMoves);
 
-int dist = graph.ShortestPathTo(initialState, s => s.Pos == end).GetLength();
+int dist = graph.AStarFrom(new State[] { initialState }, heuristic, s => s.Pos == end).GetLength();
 
 Console.WriteLine($"Part 1: {dist}");
 
@@ -94,11 +121,9 @@ Console.WriteLine($"Part 1: {dist}");
 WeightedGraphByFunction<State> ultraGraph = new WeightedGraphByFunction<State>(ultraNextMoves);
 
 State[] possibleStarts = new State[] { initialState, initialState2 };
-IEnumerable<WeightedGraph<State>.VisitPath> paths = possibleStarts.Select(p => ultraGraph.ShortestPathTo(p, s => s.Pos == end && ultraCanStop(s)));
+WeightedGraph<State>.VisitPath path = ultraGraph.AStarFrom(possibleStarts, heuristic, s => s.Pos == end && ultraCanStop(s));
 
-int minDist = paths.Where(p => p != null).Min(p => p.GetLength());
-
-Console.WriteLine($"Part 2: {minDist}");
+Console.WriteLine($"Part 2: {path.GetLength()}");
 
 public record Point(int X, int Y)
 {
@@ -112,15 +137,13 @@ public abstract class WeightedGraph<T> where T : IEquatable<T>
     public class VisitPath
     {
         private int Length;
-        private T Start;
         private T End;
         private Dictionary<T, T> Predecessors;
 
-        public VisitPath(T end, T start, int length, Dictionary<T, T> predecessors)
+        public VisitPath(T end, int length, Dictionary<T, T> predecessors)
         {
             End = end;
             Length = length;
-            Start = start;
             Predecessors = predecessors;
         }
 
@@ -133,7 +156,7 @@ public abstract class WeightedGraph<T> where T : IEquatable<T>
         {
             T current = End;
             Stack<T> reversePath = new Stack<T>();
-            while (!current.Equals(Start))
+            while (!Predecessors[current].Equals(current))
             {
                 T pred = Predecessors[current];
                 reversePath.Push(current);
@@ -151,6 +174,47 @@ public abstract class WeightedGraph<T> where T : IEquatable<T>
 
     public abstract IEnumerable<(T, int)> GetNeighbours(T node);
 
+    public VisitPath AStarFrom(IEnumerable<T> starts, Func<T, int> heuristic, Func<T, bool> isGoal)
+    {
+        SimplePriorityQueue<T, int> queue = new SimplePriorityQueue<T, int>();
+        Dictionary<T, int> bestSoFar = new Dictionary<T, int>();
+        Dictionary<T, T> predecessor = new Dictionary<T, T>();
+
+        foreach(T start in starts)
+        {
+            queue.Enqueue(start, heuristic(start));
+            bestSoFar.Add(start, 0);
+            predecessor.Add(start, start);
+        }
+        while (queue.Count != 0)
+        {
+            T node = queue.Dequeue();
+            if (isGoal(node))
+            {
+                return new VisitPath(node, bestSoFar[node], predecessor);
+            }
+            foreach ((T node, int edgeWeight) neighbour in GetNeighbours(node))
+            {
+                int potentialDist = bestSoFar[node] + neighbour.edgeWeight;
+                int heuristicDist = potentialDist + heuristic(neighbour.node);
+                if (potentialDist < bestSoFar.GetOrElse(neighbour.node, int.MaxValue))
+                {
+                    bestSoFar.AddOrSet(neighbour.node, potentialDist);
+                    predecessor.AddOrSet(neighbour.node, node);
+                    if (queue.Contains(neighbour.node))
+                    {
+                        queue.UpdatePriority(neighbour.node, heuristicDist);
+                    }
+                    else
+                    {
+                        queue.Enqueue(neighbour.node, heuristicDist);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public void DijkstraFrom(T start, Func<T, VisitPath, bool> visit)
     {
         SimplePriorityQueue<T, int> queue = new SimplePriorityQueue<T, int>();
@@ -163,7 +227,7 @@ public abstract class WeightedGraph<T> where T : IEquatable<T>
         while (queue.Count != 0)
         {
             T node = queue.Dequeue();
-            if (visit(node, new VisitPath(node, start, bestSoFar[node], predecessor)))
+            if (visit(node, new VisitPath(node, bestSoFar[node], predecessor)))
             {
                 return;
             }
