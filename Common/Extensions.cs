@@ -71,6 +71,19 @@ namespace Common
             }
         }
 
+        public static IEnumerable<TResult> ProcessAdjacent<TElem, TResult>(this IEnumerable<TElem> sequence, TResult initial, Func<TResult, TElem, TResult> selector)
+        {
+            IEnumerator<TElem> iterator = sequence.GetEnumerator();
+            TResult prev = initial;
+            while (iterator.MoveNext())
+            {
+                TElem current = iterator.Current;
+                TResult result = selector(prev, current);
+                yield return result;
+                prev = result;
+            }
+        }
+
         public static IEnumerable<List<string>> Paragraphs(this IEnumerable<string> lines)
         {
             return lines.SplitBy(s => s.Trim().Length == 0);

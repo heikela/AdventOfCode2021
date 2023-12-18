@@ -3,64 +3,87 @@
 //string fileName = "../../../testInput.txt";
 string fileName = "../../../input.txt";
 
+string[] lines = File.ReadAllLines(fileName);
+
 Point up = new Point(0, -1);
 Point down = new Point(0, 1);
 Point left = new Point(-1, 0);
 Point right = new Point(1, 0);
-List<Point> directions = new List<Point>() { up, down, left, right };
 
-HashSet<Point> edge = new HashSet<Point>();
-
-Point pos = new Point(0, 0);
-edge.Add(pos);
-
-foreach (string line in File.ReadAllLines(fileName))
+(Point, int) parseLine1(string line)
 {
     string[] parts = line.Split(' ');
-    Point dir = parts[0] switch
+    char dirChar = parts[0].First();
+    Point dir = dirChar switch
     {
-        "U" => up,
-        "D" => down,
-        "L" => left,
-        "R" => right,
-        _ => throw new Exception($"Invalid direction {parts[0]}")
+        'U' => up,
+        'D' => down,
+        'L' => left,
+        'R' => right,
+        _ => throw new Exception($"Invalid direction {dirChar}")
     };
     int steps = Int32.Parse(parts[1]);
-    for (int i = 0; i < steps; i++)
+    return (dir, steps);
+}
+
+(Point, int) parseLine2(string line)
+{
+    string[] parts = line.Split(' ');
+    char dirChar = parts[2].Reverse().Skip(1).First();
+    Point dir = dirChar switch
     {
-        pos += dir;
-        edge.Add(pos);
+        '3' => up,
+        '1' => down,
+        '2' => left,
+        '0' => right,
+        _ => throw new Exception($"Invalid direction {dirChar}")
+    };
+    int steps = Int32.Parse(parts[2].Substring(2, parts[2].Length - 4), System.Globalization.NumberStyles.HexNumber);
+    return (dir, steps);
+}
+
+Point nextPoint(Point current, (Point, int) move)
+{
+    Point dir = move.Item1;
+    int steps = move.Item2;
+    return current + dir * steps;
+}
+
+var moves = lines.Select(parseLine2).ToList();
+var corners = moves.ProcessAdjacent(new Point(0, 0), nextPoint);
+
+long innerArea = polyArea(corners);
+long edgeContribution = edgeArea(moves.Select(m => m.Item2));
+
+Console.WriteLine(innerArea + edgeContribution);
+
+
+long polyArea(IEnumerable<Point> poly)
+{
+    Point prev = poly.Last();
+    long sum1 = 0;
+    long sum2 = 0;
+    foreach (Point p in poly)
+    {
+        sum1 += (long)prev.X * (long)p.Y;
+        sum2 += (long)prev.Y * (long)p.X;
+        prev = p;
     }
+    return Math.Abs(sum1 - sum2) / 2;
 }
 
-int minX = edge.Min(p => p.X) - 1;
-int maxX = edge.Max(p => p.X) + 1;
-int minY = edge.Min(p => p.Y) - 1;
-int maxY = edge.Max(p => p.Y) + 1;
-
-int gridArea = (maxX - minX + 1) * (maxY - minY + 1);
-
-HashSet<Point> outside = new HashSet<Point>();
-
-bool withinBounds(Point p)
+long edgeArea(IEnumerable<int> moveLengths)
 {
-    return p.X >= minX && p.X <= maxX && p.Y >= minY && p.Y <= maxY;
+    long sum = 0;
+    foreach (int length in moveLengths)
+    {
+        sum += length;
+    }
+    return sum / 2 + 1; // this assumes the edge does not cross itself
 }
-
-IEnumerable<Point> getOutsideMoves(Point pos)
-{
-    return directions.Select(d => pos + d).Where(p => !edge.Contains(p) && withinBounds(p));
-}
-
-Graph<Point> outsideGraph = new GraphByFunction<Point>(getOutsideMoves);
-
-Action<Point, Graph<Point>.VisitPath> trackOutside = (pos, path) => outside.Add(pos);
-
-outsideGraph.BfsFrom(new Point(minX, minY), trackOutside);
-
-Console.WriteLine($"Part 1: {gridArea - outside.Count}");
 
 public record Point(int X, int Y)
 {
     public static Point operator+(Point a, Point b) => new Point(a.X + b.X, a.Y + b.Y);
+    public static Point operator*(Point a, int b) => new Point(a.X * b, a.Y * b);
 }
