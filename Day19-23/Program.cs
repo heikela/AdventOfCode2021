@@ -51,6 +51,33 @@ foreach (var part in parts)
 }
 Console.WriteLine($"Part 1: {sum}");
 
+Queue<(string, PartRange)> ranges = new Queue<(string, PartRange)>();
+ranges.Enqueue(("in", new PartRange(new Range(1, 4000), new Range(1, 4000), new Range(1, 4000), new Range(1, 4000))));
+
+long acceptedCount = 0;
+while (ranges.Count > 0)
+{
+    (string current, PartRange range) = ranges.Dequeue();
+    WorkFlow workflow = workFlowById[current];
+    foreach (var (next, nextRange) in range.RangesFromWorkFlow(workflow))
+    {
+        if (next == "A")
+        {
+            acceptedCount += nextRange.Count();
+        }
+        else if (next == "R")
+        {
+            continue;
+        }
+        else
+        {
+            ranges.Enqueue((next, nextRange));
+        }
+    }
+}
+
+Console.WriteLine($"Part 2: {acceptedCount}");
+
 public record Part(int X, int M, int A, int S)
 {
     public int Value()
@@ -97,5 +124,113 @@ public record WorkFlow(string Id, List<Rule> Rules, string DefaultDest)
         }
 
         return DefaultDest;
+    }
+}
+
+public record Range(int Min, int Max)
+{
+    public long Count()
+    {
+        return Max - Min + 1;
+    }
+
+    public bool IsEmpty()
+    {
+        return Min > Max;
+    }
+
+    public (Range, Range) SplitByLessThan(int threshold)
+    {
+        if (Min > threshold)
+        {
+            return (new Range(0, -1), this);
+        }
+        else if (Max < threshold)
+        {
+            return (this, new Range(0, -1));
+        }
+        else
+        {
+            return (new Range(Min, threshold - 1), new Range(threshold, Max));
+        }
+    }
+
+    public (Range, Range) SplitByGreaterThan(int threshold)
+    {
+        if (Min > threshold)
+        {
+            return (this, new Range(0, -1));
+        }
+        else if (Max < threshold)
+        {
+            return (new Range(0, -1), this);
+        }
+        else
+        {
+            return (new Range(threshold + 1, Max), new Range(Min, threshold));
+        }
+    }
+
+}
+
+public record PartRange(Range XRange, Range MRange, Range ARange, Range SRange)
+{
+    public long Count()
+    {
+        return XRange.Count() * MRange.Count() * ARange.Count() * SRange.Count();
+    }
+
+    private (PartRange, PartRange) SplitByRule(Rule rule)
+    {
+        Range varRange = rule.Var switch
+        {
+            "x" => XRange,
+            "m" => MRange,
+            "a" => ARange,
+            "s" => SRange,
+            _ => throw new Exception("Invalid variable")
+        };
+        (Range matches, Range doesNotMatch) = (rule.Op) switch
+        {
+            ">" => varRange.SplitByGreaterThan(rule.Threshold),
+            "<" => varRange.SplitByLessThan(rule.Threshold),
+            _ => throw new Exception("Invalid operator")
+        };
+        switch (rule.Var)
+        {
+            case "x":
+                return (new PartRange(matches, MRange, ARange, SRange), new PartRange(doesNotMatch, MRange, ARange, SRange));
+            case "m":
+                return (new PartRange(XRange, matches, ARange, SRange), new PartRange(XRange, doesNotMatch, ARange, SRange));
+            case "a":
+                return (new PartRange(XRange, MRange, matches, SRange), new PartRange(XRange, MRange, doesNotMatch, SRange));
+            case "s":
+                return (new PartRange(XRange, MRange, ARange, matches), new PartRange(XRange, MRange, ARange, doesNotMatch));
+            default:
+                throw new Exception("Invalid variable");
+        }
+    }
+
+    public bool IsEmpty()
+    {
+        return XRange.IsEmpty() || MRange.IsEmpty() || ARange.IsEmpty() || SRange.IsEmpty();
+    }
+
+    public IEnumerable<(string, PartRange)> RangesFromWorkFlow(WorkFlow workFlow)
+    {
+        PartRange remaining = this;
+        foreach (Rule rule in workFlow.Rules)
+        {
+            (PartRange matches, PartRange doesNotMatch) = remaining.SplitByRule(rule);
+            if (!matches.IsEmpty())
+            {
+                yield return (rule.Dest, matches);
+            }
+            remaining = doesNotMatch;
+        }
+        if (!remaining.IsEmpty())
+        {
+            yield return (workFlow.DefaultDest, remaining);
+        }
     }
 }
