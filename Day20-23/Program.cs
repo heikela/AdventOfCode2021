@@ -45,8 +45,10 @@ foreach (var kv in reverseConnections)
 Queue<Pulse> pulses = new Queue<Pulse>();
 int lowCount = 0;
 int highCount = 0;
+bool done = false;
+int round = 1;
 
-for (int round = 0; round < 1000; round++)
+while (!done)
 {
     pulses.Enqueue(new Pulse(false, "broadcaster", "in"));
     while (pulses.Count > 0)
@@ -59,6 +61,11 @@ for (int round = 0; round < 1000; round++)
         else
         {
             lowCount++;
+            if (pulse.Destination == "rx")
+            {
+                Console.WriteLine($"Part 2: {round}");
+                done = true;
+            }
         }
         string type = pulse.High ? "high" : "low";
         //    Console.WriteLine($"{pulse.From} -{type}-> {pulse.Destination}");
@@ -71,6 +78,7 @@ for (int round = 0; round < 1000; round++)
             }
         }
     }
+    round++;
 }
 
 long result = (long)lowCount * (long)highCount;
