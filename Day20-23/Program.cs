@@ -94,6 +94,7 @@ int lowCount = 0;
 int highCount = 0;
 bool done = false;
 int round = 1;
+List<string> interesting = new List<string>() { "rd", "bt", "fv", "pr" };
 
 while (!done)
 {
@@ -104,6 +105,10 @@ while (!done)
         if (pulse.High)
         {
             highCount++;
+            if (interesting.Contains(pulse.From))
+            {
+                Console.WriteLine($"{pulse.From} sends high at {round}");
+            }
         }
         else
         {
