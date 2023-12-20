@@ -1,0 +1,35 @@
+﻿vd sends to rx, needs to be all high
+
+---------
+vd gets from rd, bt, fv, pr (all of which are conjunctive)
+
+---------
+
+rd is sent to by hc only
+
+bt is sent to by qt only
+
+fv is sent to by ck only
+
+br is sent to by kb only
+
+---------
+
+hc is involved in lots, as are the others
+
+---------
+
+
+Strongly Connected components:
+
+Group broadcaster: broadcaster
+Group tn: tn, gn, roadcaster, kb, gt, nm, rf, ps, pv, gc, gd, pf, pp, gv
+Group pr: pr
+Group df: df, hc, fr, vg, cc, nl, dj, qr, ch, gq, lq, ks, lc
+Group rd: rd
+Group xz: xz, ms, hh, nz, jn, jl, sx, mt, rb, ck, rq, bg, ts
+Group fv: fv
+Group jb: jb, qt, xm, zq, fz, fp, vx, gb, cs, kz, td, gh, rp
+Group bt: bt
+Group vd: vd
+Group rx: rx

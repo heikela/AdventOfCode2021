@@ -5,20 +5,13 @@ string fileName = "../../../input.txt";
 
 Dictionary<string, Module> modules = new Dictionary<string, Module>();
 Dictionary<string, List<string>> reverseConnections = new Dictionary<string, List<string>>();
+Dictionary<string, List<string>> connections = new Dictionary<string, List<string>>();
 
 foreach (var line in File.ReadAllLines(fileName))
 {
     string[] parts = line.Split("->", StringSplitOptions.TrimEntries);
     string id = parts[0].Substring(1);
     string[] destinations = parts[1].Split(',', StringSplitOptions.TrimEntries);
-    foreach (var dest in destinations)
-    {
-        if (!reverseConnections.ContainsKey(dest))
-        {
-            reverseConnections[dest] = new List<string>();
-        }
-        reverseConnections[dest].Add(id);
-    }
     if (parts[0] == "broadcaster")
     {
         id = "broadcaster";
@@ -32,6 +25,60 @@ foreach (var line in File.ReadAllLines(fileName))
     {
         modules[id] = new Conjunction(id, destinations.ToList());
     }
+    connections.Add(id, destinations.ToList());
+    foreach (var dest in destinations)
+    {
+        if (!reverseConnections.ContainsKey(dest))
+        {
+            reverseConnections[dest] = new List<string>();
+        }
+        reverseConnections[dest].Add(id);
+    }
+}
+
+HashSet<string> visited = new HashSet<string>();
+Dictionary<string, string> roots = new Dictionary<string, string>();
+Stack<string> L = new Stack<string>();
+
+void visit(string id)
+{
+    if (!visited.Contains(id))
+    {
+        visited.Add(id);
+        foreach (var dest in connections.GetOrElse(id, new List<string>()))
+        {
+            visit(dest);
+        }
+        L.Push(id);
+    }
+}
+
+foreach (var kv in connections)
+{
+    visit(kv.Key);
+}
+
+void assign(string id, string root)
+{
+    if (!roots.ContainsKey(id))
+    {
+        roots[id] = root;
+        foreach (var dest in reverseConnections.GetOrElse(id, new List<string>()))
+        {
+            assign(dest, root);
+        }
+    }
+}
+
+while (L.Count > 0)
+{
+    string id = L.Pop();
+    assign(id, id);
+}
+
+foreach (var group in roots.GroupBy(kv => kv.Value))
+{
+    Console.WriteLine($"Group {group.Key}: {string.Join(", ", group.Select(kv => kv.Key))}");
 }
 
 foreach (var kv in reverseConnections)
