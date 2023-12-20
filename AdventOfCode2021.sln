@@ -121,6 +121,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day18-23", "Day18-23\Day18-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day19-23", "Day19-23\Day19-23.csproj", "{7A6D9152-6704-41A8-9837-0DBFDFBE11E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day20-23", "Day20-23\Day20-23.csproj", "{A5AE223E-3E5F-452C-B9E2-880ED9E33151}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -359,6 +361,10 @@ Global
 		{7A6D9152-6704-41A8-9837-0DBFDFBE11E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A6D9152-6704-41A8-9837-0DBFDFBE11E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A6D9152-6704-41A8-9837-0DBFDFBE11E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5AE223E-3E5F-452C-B9E2-880ED9E33151}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5AE223E-3E5F-452C-B9E2-880ED9E33151}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5AE223E-3E5F-452C-B9E2-880ED9E33151}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5AE223E-3E5F-452C-B9E2-880ED9E33151}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -396,6 +402,7 @@ Global
 		Common\Common.projitems*{9db36ea0-c63b-427f-b0dd-ae172b4fec5f}*SharedItemsImports = 5
 		Common\Common.projitems*{a02eea65-994b-41fa-b3fd-04159cb8d8a8}*SharedItemsImports = 5
 		Common\Common.projitems*{a381dba1-09d4-4121-98cc-c2e714138066}*SharedItemsImports = 5
+		Common\Common.projitems*{a5ae223e-3e5f-452c-b9e2-880ed9e33151}*SharedItemsImports = 5
 		Common\Common.projitems*{a5e338db-a923-4444-8c9f-874d0457f517}*SharedItemsImports = 5
 		Common\Common.projitems*{aae39024-69eb-4917-b23d-34b49818a785}*SharedItemsImports = 5
 		Common\Common.projitems*{bb52e0dd-0cac-4b99-8e56-be1da321acea}*SharedItemsImports = 5
