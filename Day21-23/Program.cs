@@ -1,7 +1,7 @@
 ﻿using Common;
 
-//string fileName = "../../../input.txt";
-string fileName = "../../../testInput.txt";
+string fileName = "../../../input.txt";
+//string fileName = "../../../testInput.txt";
 
 var lines = File.ReadAllLines(fileName);
 
@@ -33,6 +33,11 @@ List<Point> dirs = new List<Point>() { up, down, left, right };
 
 bool canMoveTo(Point p)
 {
+    return map.GetOrElse(p, '#') != '#';
+}
+
+bool canMoveToInf(Point p)
+{
     int projectedX = p.X % W;
     if (projectedX < 0)
     {
@@ -47,12 +52,12 @@ bool canMoveTo(Point p)
     return map[projectionToOriginal] != '#';
 }
 
-IEnumerable<Point> getMoves(Point p)
+IEnumerable<Point> getMovesInf(Point p)
 {
     foreach (var dir in dirs)
     {
         Point nextP = p + dir;
-        if (canMoveTo(nextP))
+        if (canMoveToInf(nextP))
         {
             yield return nextP;
         }
@@ -76,10 +81,9 @@ current.Add(start);
         next = new HashSet<Point>();
         foreach (var p in current)
         {
-            foreach (var dir in dirs)
+            foreach (var nextP in getMovesInf(p))
             {
-                Point nextP = p + dir;
-                if (!saturated.Contains(nextP) && !liveStarts.Contains(nextP) && canMoveTo(nextP))
+                if (!saturated.Contains(nextP) && !liveStarts.Contains(nextP))
                 {
                     next.Add(nextP);
                 }
@@ -90,17 +94,74 @@ current.Add(start);
     return (current, liveStarts, saturated.LongCount() + saturatedExcluded);
 }
 
+Point mapIndex(Point p)
+{
+    int xResult = p.X / W;
+    int yResult = p.Y / H;
+    if (p.X < 0)
+    {
+        xResult = (p.X + 1) / W - 1;
+    }
+    if (p.Y < 0)
+    {
+        yResult = (p.Y + 1) / H - 1;
+    }
+    return new Point(xResult, yResult);
+}
+
+List<Point> mapsToCheck = dirs.ToList();
+mapsToCheck.Add(new Point(0, 0));
+mapsToCheck.Add(up + left);
+mapsToCheck.Add(up + right);
+mapsToCheck.Add(down + left);
+mapsToCheck.Add(down + right);
+mapsToCheck.Add(down + down);
+mapsToCheck.Add(right + right);
+mapsToCheck.Add(left + left);
+mapsToCheck.Add(up + up);
+
+int toVisitCount = (map.Where(kv => kv.Value == '.').Select(kv => kv.Key).Count() - 2) * mapsToCheck.Count;
+HashSet<Point> visited = new HashSet<Point>();
+Dictionary<Point, int> dist = new Dictionary<Point, int>();
+Dictionary<Point, int> distDiff = new Dictionary<Point, int>();
+int step = 0;
+while (visited.Count != toVisitCount)
+{
+    current = current.SelectMany(p => getMovesInf(p)).ToHashSet();
+    step++;
+    foreach (var p in current)
+    {
+        if (!visited.Contains(p) && mapsToCheck.Contains(mapIndex(p)))
+        {
+            visited.Add(p);
+            dist[p] = step;
+            distDiff[p] = step - start.ManhattanDistance(p);
+        }
+    }
+}
+
+foreach (var g in distDiff.GroupBy(kv => kv.Value))
+{
+    Console.WriteLine($"Distance difference {g.Key}: {g.Count()}");
+}
+
 HashSet<Point> saturated = new HashSet<Point>();
 long saturatedExcluded = 0;
-
+/*
 for (int i = 0; i < 1000; i += 2)
 {
     (current, saturated, saturatedExcluded) = twoStepsFrom(current, saturated, saturatedExcluded);
 }
+*/
 
 Console.WriteLine($"Part 2: {current.LongCount() + saturated.LongCount() + saturatedExcluded}");
 
 public record Point(int X, int Y)
 {
     public static Point operator+(Point a, Point b) => new Point(a.X + b.X, a.Y + b.Y);
+
+    public int ManhattanDistance(Point other)
+    {
+        return Math.Abs(X - other.X) + Math.Abs(Y - other.Y);
+    }
 }
