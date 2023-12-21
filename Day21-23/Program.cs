@@ -1,8 +1,8 @@
 ﻿using Common;
 using System.Diagnostics;
 
-//string fileName = "../../../input.txt";
-string fileName = "../../../testInput.txt";
+string fileName = "../../../input.txt";
+//string fileName = "../../../testInput.txt";
 
 var lines = File.ReadAllLines(fileName);
 
@@ -119,7 +119,8 @@ void explore()
     HashSet<Point> saturated = new HashSet<Point>();
     long saturatedExcluded = 0;
 
-    for (int i = 0; i < 700; i += 2)
+    recordVisit(start, 0);
+    for (int i = 0; i < 1800; i += 2)
     {
         (current, saturated, saturatedExcluded) = twoStepsFrom(current, saturated, saturatedExcluded, i);
     }
@@ -129,7 +130,7 @@ void explore()
         for (int my = -6; my < 7; ++my)
         {
             Point mapPos = new Point(mx, my);
-            Point clampedMapPos = mapPos.clamp(1);
+            Point clampedMapPos = mapPos.clamp(4);
             for (int x = 0; x < W; ++x)
             {
                 for (int y = 0; y < H; ++y)
@@ -161,7 +162,7 @@ explore();
 
 void calculate(int moves)
 {
-    long mapSizesDefinitelyIn = Math.Max(0, (moves - maxDelay) / H);
+    int mapSizesDefinitelyIn = Math.Max(0, (moves - maxDelay) / H);
     /*      x
      *     xxx
      *    xxxxx
@@ -193,177 +194,151 @@ void calculate(int moves)
     long parityZeroMapsDefinitelyIn = 0L;
     long parityOneMapsDefinitelyIn = 0L;
 
-    long c = (mapSizesDefinitelyIn + 1) / 2;
-    parityZeroMapsDefinitelyIn = (2 * c - 1) * (2 * c - 1);
+    long c = ((long)mapSizesDefinitelyIn + 1L) / 2;
+    long d = Math.Max(0, 2 * c - 1);
+    parityZeroMapsDefinitelyIn = d * d;
 
-    c = mapSizesDefinitelyIn / 2;
+    c = (long)mapSizesDefinitelyIn / 2L;
     parityOneMapsDefinitelyIn = (2 * c) * (2 * c);
 
-/*
-    long mapsDefinitelyIn = 2L * mapSizesDefinitelyIn * mapSizesDefinitelyIn - 2L * mapSizesDefinitelyIn + 1L;
-    if (mapSizesDefinitelyIn == 0)
-    {
-        mapsDefinitelyIn = 0;
-    }
-*/
+    Console.WriteLine(parityZeroMapsDefinitelyIn);
+    Console.WriteLine(parityOneMapsDefinitelyIn);
 
-    Dictionary<Point, long> countsByDirection = new Dictionary<Point, long>();
-    Dictionary<Point, long> outerCountsByDirection = new Dictionary<Point, long>();
+    /*
+        long mapsDefinitelyIn = 2L * mapSizesDefinitelyIn * mapSizesDefinitelyIn - 2L * mapSizesDefinitelyIn + 1L;
+        if (mapSizesDefinitelyIn == 0)
+        {
+            mapsDefinitelyIn = 0;
+        }
+    */
+
     List<Point> directions = new List<Point>() { up, down, left, right, up + right, up + left, down + right, down + left };
-    foreach (Point d in directions)
-    {
-        countsByDirection.Add(d, 0);
-    }
     List<Point> diagonals = new List<Point>() { up + right, up + left, down + right, down + left };
-    foreach (Point d in diagonals)
-    {
-        outerCountsByDirection.Add(d, 0);
-    }
 
-//    Console.WriteLine($"TopIndices = {mapIndex(start + new Point(0, -moves))} to {mapIndex(start + new Point(-start.X, -moves + maxDelay + start.X))}");
-
-    Point topIndex = mapIndex(start + new Point(0, -moves));
-    Point leftIndex = mapIndex(start + new Point(-moves, 0));
-    Point bottomIndex = mapIndex(start + new Point(0, moves));
-    Point rightIndex = mapIndex(start + new Point(moves, 0));
-
-    Point dirToOuterMapIndex(Point dir)
+    long calculateShell(int moves, int d)
     {
-        if (dir == left + up)
+        Dictionary<Point, long> countsByDirection = new Dictionary<Point, long>();
+        foreach (Point dir in directions)
         {
-            return topIndex + left;
+            countsByDirection.Add(dir, 0);
         }
-        if (dir == left + down)
-        {
-            return bottomIndex + left;
-        }
-        if (dir == right + up)
-        {
-            return topIndex + right;
-        }
-        if (dir == right + down)
-        {
-            return bottomIndex + right;
-        }
-        throw new Exception("Outer map index called on non diagonal");
-    }
+        Point topIndex = new Point(0, -d);
+        Point leftIndex = new Point(-d, 0);
+        Point bottomIndex = new Point(0, d);
+        Point rightIndex = new Point(d, 0);
 
-    Point dirToRepresentativeMapIndex(Point dir)
-    {
-        if (dir == up)
+        Point dirToRepresentativeMapIndex(Point dir)
         {
-            return topIndex;
-        }
-        if (dir == down)
-        {
-            return bottomIndex;
-        }
-        if (dir == left)
-        {
-            return leftIndex;
-        }
-        if (dir == right)
-        {
-            return rightIndex;
-        }
-        if (dir == left + up)
-        {
-            return topIndex + left + down;
-        }
-        if (dir == left + down)
-        {
-            return bottomIndex + left + up;
-        }
-        if (dir == right + up)
-        {
-            return topIndex + right + down;
-        }
-        if (dir == right + down)
-        {
-            return bottomIndex + right + up;
-        }
-        throw new Exception($"Invalid direction {dir}");
-    }
-
-    foreach (var idx in new Point[] { topIndex, leftIndex, bottomIndex, rightIndex })
-    {
-//        Console.WriteLine(idx);
-    }
-    for (int y = 0; y < H; ++y)
-    {
-        for (int x = 0; x < W; ++x)
-        {
-            Point posInMap = new Point(x, y);
-            if (distDiffs.ContainsKey(posInMap))
+            if (dir == up)
             {
-                foreach (Point dir in directions)
+                return topIndex;
+            }
+            if (dir == down)
+            {
+                return bottomIndex;
+            }
+            if (dir == left)
+            {
+                return leftIndex;
+            }
+            if (dir == right)
+            {
+                return rightIndex;
+            }
+            if (dir == left + up)
+            {
+                return topIndex + left + down;
+            }
+            if (dir == left + down)
+            {
+                return bottomIndex + left + up;
+            }
+            if (dir == right + up)
+            {
+                return topIndex + right + down;
+            }
+            if (dir == right + down)
+            {
+                return bottomIndex + right + up;
+            }
+            throw new Exception($"Invalid direction {dir}");
+        }
+
+        for (int y = 0; y < H; ++y)
+        {
+            for (int x = 0; x < W; ++x)
+            {
+                Point posInMap = new Point(x, y);
+                if (distDiffs.ContainsKey(posInMap))
                 {
-                    int dist = start.ManhattanDistance(relativeToAbsolute(posInMap, dirToRepresentativeMapIndex(dir)));
-                    dist += distDiffs[posInMap][dir];
-                    if (dist <= moves && (dist % 2 == moves % 2))
+                    foreach (Point dir in directions)
                     {
-                        countsByDirection[dir]++;
-                    }
-                    if (diagonals.Contains(dir))
-                    {
-                        dist = start.ManhattanDistance(relativeToAbsolute(posInMap, dirToOuterMapIndex(dir)));
-                        dist += distDiffs[posInMap][dir];
-                        if (dist <= moves)
+                        Point representativeMap = dirToRepresentativeMapIndex(dir);
+                        int dist = start.ManhattanDistance(relativeToAbsolute(posInMap, representativeMap));
+                        Point clampedDirection = representativeMap.clamp(2);
+                        dist += distDiffs[posInMap][clampedDirection];
+                        if (dist <= moves && (dist % 2 == moves % 2))
                         {
-                            outerCountsByDirection[dir]++;
+                            countsByDirection[dir]++;
                         }
                     }
                 }
             }
         }
-    }
-    long innerCountP0 = parityZeroMapsDefinitelyIn * visitedInFirstMap.Count(p => (p.X + p.Y) % 2 == (start.X + start.Y) % 2);
-    long innerCountP1 = parityOneMapsDefinitelyIn * visitedInFirstMap.Count(p => (p.X + p.Y) % 2 != (start.X + start.Y) % 2);
+        long diagonalMultiplier = Math.Max(bottomIndex.Y - 1, 0);
 
-    for (int dx = 0; dx < 4; ++dx)
-    {
-//        Console.WriteLine(start.ManhattanDistance(relativeToAbsolute(new Point(0, H - 1), topIndex + new Point(dx, dx))));
+        long total = 0;
+        total += countsByDirection[up];
+        if (bottomIndex != topIndex)
+        {
+            total += countsByDirection[down];
+        }
+        if (leftIndex != topIndex)
+        {
+            total += countsByDirection[left];
+        }
+        if (rightIndex != leftIndex)
+        {
+            total += countsByDirection[right];
+        }
+        total += countsByDirection[right + up] * diagonalMultiplier;
+        total += countsByDirection[right + down] * diagonalMultiplier;
+        total += countsByDirection[left + up] * diagonalMultiplier;
+        total += countsByDirection[left + down] * diagonalMultiplier;
+        return total;
     }
 
-    for (int dx = 0; dx < 4; ++dx)
-    {
-//        Console.WriteLine(start.ManhattanDistance(relativeToAbsolute(new Point(W - 1, H - 1), topIndex + new Point(-dx, dx))));
-    }
+    //    Console.WriteLine($"TopIndices = {mapIndex(start + new Point(0, -moves))} to {mapIndex(start + new Point(-start.X, -moves + maxDelay + start.X))}");
 
-    for (int dx = 0; dx < 4; ++dx)
-    {
-//        Console.WriteLine(start.ManhattanDistance(relativeToAbsolute(new Point(0, 0), rightIndex + new Point(-dx, dx))));
-    }
+    Console.WriteLine($"Calculating for {moves} moves");
+    long innerCountP0 = parityZeroMapsDefinitelyIn * visitedInFirstMap.Count(p => (Math.Abs(p.X - start.X) + Math.Abs(p.Y - start.Y) + moves) % 2 == 0);
+    long innerCountP1 = parityOneMapsDefinitelyIn * visitedInFirstMap.Count(p => (Math.Abs(p.X - start.X) + Math.Abs(p.Y - start.Y) + moves) % 2 == 1);
+    Console.WriteLine($"InnercountP0 = {innerCountP0}");
+    Console.WriteLine($"InnercountP1 = {innerCountP1}");
 
-    for (int dx = 0; dx < 4; ++dx)
-    {
-//        Console.WriteLine(start.ManhattanDistance(relativeToAbsolute(new Point(W - 1, 0), leftIndex + new Point(dx, dx))));
-    }
-
-    long diagonalMultiplier = bottomIndex.Y - 1;
     long total = innerCountP0 + innerCountP1;
-//    Console.WriteLine($"Part 2 estimate 1 {total}");
-    total += countsByDirection[up];
-    total += countsByDirection[down];
-    total += countsByDirection[left];
-    total += countsByDirection[right];
-    total += countsByDirection[right + up] * diagonalMultiplier;
-    total += countsByDirection[right + down] * diagonalMultiplier;
-    total += countsByDirection[left + up] * diagonalMultiplier;
-    total += countsByDirection[left + down] * diagonalMultiplier;
-//    Console.WriteLine($"Part 2 estimate 2 {total}");
-    total += outerCountsByDirection[left + down] * (diagonalMultiplier + 1);
-    total += outerCountsByDirection[left + up] * (diagonalMultiplier + 1);
-    total += outerCountsByDirection[right + down] * (diagonalMultiplier + 1);
-    total += outerCountsByDirection[right + up] * (diagonalMultiplier + 1);
+
+    bool moreToAdd = true;
+    int dd = 0;
+    while (moreToAdd)
+    {
+        long shellContribution = calculateShell(moves, mapSizesDefinitelyIn + dd);
+        ++dd;
+        total += shellContribution;
+        if (shellContribution == 0)
+        {
+            moreToAdd = false;
+        }
+    }
+
+    //    Console.WriteLine($"Part 2 estimate 1 {total}");
+    //    Console.WriteLine($"Part 2 estimate 2 {total}");
     //    Console.WriteLine($"Part 2 estimate 3 {total}");
-    // 1260258050363188 is not right
-    // 1260259609893888 is not right
     // 630130522302936 is not right
+    // 630129824772393
     Console.WriteLine($"In {moves} steps, {total} locations appear reachable");
 }
 
-//calculate(26501365);
 calculate(6);
 calculate(10);
 calculate(50);
@@ -371,6 +346,7 @@ calculate(100);
 calculate(500);
 calculate(1000);
 calculate(5000);
+calculate(26501365);
 
 (HashSet<Point>, HashSet<Point>, long) twoStepsFrom(HashSet<Point> liveStarts, HashSet<Point> saturated, long saturatedExcluded, int step)
 {
