@@ -1,7 +1,8 @@
 ﻿using Common;
+using System.Diagnostics;
 
-string fileName = "../../../input.txt";
-//string fileName = "../../../testInput.txt";
+//string fileName = "../../../input.txt";
+string fileName = "../../../testInput.txt";
 
 var lines = File.ReadAllLines(fileName);
 
@@ -9,6 +10,7 @@ Dictionary<Point, char> map = new Dictionary<Point, char>();
 
 int W = lines[0].Length;
 int H = lines.Length;
+Debug.Assert(W == H);
 
 for (int y = 0; y < lines.Length; y++)
 {
@@ -20,6 +22,8 @@ for (int y = 0; y < lines.Length; y++)
 
 Point start = map.First(kv => kv.Value == 'S').Key;
 map[start] = '.';
+Debug.Assert(W == start.X * 2 + 1);
+Debug.Assert(H == start.Y * 2 + 1);
 
 HashSet<Point> current = new HashSet<Point>();
 HashSet<Point> next = new HashSet<Point>();
@@ -72,7 +76,303 @@ foreach (var p in start.getMoves())
 */
 current.Add(start);
 
-(HashSet<Point>, HashSet<Point>, long) twoStepsFrom(HashSet<Point> liveStarts, HashSet<Point> saturated, long saturatedExcluded)
+HashSet<Point> visitedInFirstMap = new HashSet<Point>();
+Dictionary<Point, Dictionary<Point, int>> distDiffs = new Dictionary<Point, Dictionary<Point, int>>();
+int maxDelay = 0;
+
+void recordVisit(Point p, int dist)
+{
+    Point indexOfMap = mapIndex(p);
+    Point indexInMap = p - indexOfMap * W;
+    if (indexOfMap == new Point(0, 0))
+    {
+        visitedInFirstMap.Add(p);
+        Debug.Assert(indexInMap == p);
+    }
+    int distDiff = dist - p.ManhattanDistance(start);
+    if (distDiff > maxDelay)
+    {
+        maxDelay = distDiff;
+    }
+    if (!distDiffs.ContainsKey(indexInMap))
+    {
+        distDiffs.Add(indexInMap, new Dictionary<Point, int>() { { indexOfMap, distDiff } });
+    }
+    else
+    {
+        var innerDict = distDiffs[indexInMap];
+        if (innerDict.ContainsKey(indexOfMap))
+        {
+            Debug.Assert(innerDict[indexOfMap] <= distDiff);
+        }
+        else
+        {
+            innerDict.Add(indexOfMap, distDiff);
+        }
+    }
+}
+
+void explore()
+{
+    visitedInFirstMap.Add(start);
+    HashSet<Point> current = new HashSet<Point>() { start };
+    HashSet<Point> saturated = new HashSet<Point>();
+    long saturatedExcluded = 0;
+
+    for (int i = 0; i < 700; i += 2)
+    {
+        (current, saturated, saturatedExcluded) = twoStepsFrom(current, saturated, saturatedExcluded, i);
+    }
+
+    for (int mx = -6; mx < 7; ++mx)
+    {
+        for (int my = -6; my < 7; ++my)
+        {
+            Point mapPos = new Point(mx, my);
+            Point clampedMapPos = mapPos.clamp(1);
+            for (int x = 0; x < W; ++x)
+            {
+                for (int y = 0; y < H; ++y)
+                {
+                    Point posInMap = new Point(x, y);
+
+                    if (distDiffs.ContainsKey(posInMap) && distDiffs[posInMap].ContainsKey(mapPos))
+                    {
+
+                        int correctDd = distDiffs[posInMap][mapPos];
+                        int clampedDd = distDiffs[posInMap][clampedMapPos];
+                        if (correctDd != clampedDd)
+                        {
+                            Console.WriteLine($"Clamping map positions doesn't work at pos {posInMap}, map index {mapPos}. Distance diff is {correctDd} but at map index {clampedMapPos} it is {clampedDd}");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    var controversial = distDiffs.Where(kv => kv.Value.Count() > 1).ToDictionary();
+
+    Console.WriteLine($"Exploration done, {controversial.Count} controversial entries");
+}
+
+explore();
+
+void calculate(int moves)
+{
+    long mapSizesDefinitelyIn = Math.Max(0, (moves - maxDelay) / H);
+    /*      x
+     *     xxx
+     *    xxxxx
+     *     xxx
+     *      x
+     * 
+        0 => 0;
+        1 => 1;
+        2 => 5;
+        3 => 13;
+
+        (x-1)*(x-1) + x * x
+        = 2 x*x - 2x + 1
+
+      1 / 2 * x * (
+
+    0 => 0, 0
+    1 => 1, 0
+    2 => 1, 0 + 4
+    3 => 1 + 8 = 9, 0 + 4 = 4
+    4 => 1 + 8 = 9, 4 + 12 = 16
+    5 => 9 + 16 = 25, 4 + 12 = 16
+    6 => 9 + 16 = 25, 16 + 20 = 36
+    7 => 25 + 24 = 49,
+
+
+    */
+
+    long parityZeroMapsDefinitelyIn = 0L;
+    long parityOneMapsDefinitelyIn = 0L;
+
+    long c = (mapSizesDefinitelyIn + 1) / 2;
+    parityZeroMapsDefinitelyIn = (2 * c - 1) * (2 * c - 1);
+
+    c = mapSizesDefinitelyIn / 2;
+    parityOneMapsDefinitelyIn = (2 * c) * (2 * c);
+
+/*
+    long mapsDefinitelyIn = 2L * mapSizesDefinitelyIn * mapSizesDefinitelyIn - 2L * mapSizesDefinitelyIn + 1L;
+    if (mapSizesDefinitelyIn == 0)
+    {
+        mapsDefinitelyIn = 0;
+    }
+*/
+
+    Dictionary<Point, long> countsByDirection = new Dictionary<Point, long>();
+    Dictionary<Point, long> outerCountsByDirection = new Dictionary<Point, long>();
+    List<Point> directions = new List<Point>() { up, down, left, right, up + right, up + left, down + right, down + left };
+    foreach (Point d in directions)
+    {
+        countsByDirection.Add(d, 0);
+    }
+    List<Point> diagonals = new List<Point>() { up + right, up + left, down + right, down + left };
+    foreach (Point d in diagonals)
+    {
+        outerCountsByDirection.Add(d, 0);
+    }
+
+//    Console.WriteLine($"TopIndices = {mapIndex(start + new Point(0, -moves))} to {mapIndex(start + new Point(-start.X, -moves + maxDelay + start.X))}");
+
+    Point topIndex = mapIndex(start + new Point(0, -moves));
+    Point leftIndex = mapIndex(start + new Point(-moves, 0));
+    Point bottomIndex = mapIndex(start + new Point(0, moves));
+    Point rightIndex = mapIndex(start + new Point(moves, 0));
+
+    Point dirToOuterMapIndex(Point dir)
+    {
+        if (dir == left + up)
+        {
+            return topIndex + left;
+        }
+        if (dir == left + down)
+        {
+            return bottomIndex + left;
+        }
+        if (dir == right + up)
+        {
+            return topIndex + right;
+        }
+        if (dir == right + down)
+        {
+            return bottomIndex + right;
+        }
+        throw new Exception("Outer map index called on non diagonal");
+    }
+
+    Point dirToRepresentativeMapIndex(Point dir)
+    {
+        if (dir == up)
+        {
+            return topIndex;
+        }
+        if (dir == down)
+        {
+            return bottomIndex;
+        }
+        if (dir == left)
+        {
+            return leftIndex;
+        }
+        if (dir == right)
+        {
+            return rightIndex;
+        }
+        if (dir == left + up)
+        {
+            return topIndex + left + down;
+        }
+        if (dir == left + down)
+        {
+            return bottomIndex + left + up;
+        }
+        if (dir == right + up)
+        {
+            return topIndex + right + down;
+        }
+        if (dir == right + down)
+        {
+            return bottomIndex + right + up;
+        }
+        throw new Exception($"Invalid direction {dir}");
+    }
+
+    foreach (var idx in new Point[] { topIndex, leftIndex, bottomIndex, rightIndex })
+    {
+//        Console.WriteLine(idx);
+    }
+    for (int y = 0; y < H; ++y)
+    {
+        for (int x = 0; x < W; ++x)
+        {
+            Point posInMap = new Point(x, y);
+            if (distDiffs.ContainsKey(posInMap))
+            {
+                foreach (Point dir in directions)
+                {
+                    int dist = start.ManhattanDistance(relativeToAbsolute(posInMap, dirToRepresentativeMapIndex(dir)));
+                    dist += distDiffs[posInMap][dir];
+                    if (dist <= moves && (dist % 2 == moves % 2))
+                    {
+                        countsByDirection[dir]++;
+                    }
+                    if (diagonals.Contains(dir))
+                    {
+                        dist = start.ManhattanDistance(relativeToAbsolute(posInMap, dirToOuterMapIndex(dir)));
+                        dist += distDiffs[posInMap][dir];
+                        if (dist <= moves)
+                        {
+                            outerCountsByDirection[dir]++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    long innerCountP0 = parityZeroMapsDefinitelyIn * visitedInFirstMap.Count(p => (p.X + p.Y) % 2 == (start.X + start.Y) % 2);
+    long innerCountP1 = parityOneMapsDefinitelyIn * visitedInFirstMap.Count(p => (p.X + p.Y) % 2 != (start.X + start.Y) % 2);
+
+    for (int dx = 0; dx < 4; ++dx)
+    {
+//        Console.WriteLine(start.ManhattanDistance(relativeToAbsolute(new Point(0, H - 1), topIndex + new Point(dx, dx))));
+    }
+
+    for (int dx = 0; dx < 4; ++dx)
+    {
+//        Console.WriteLine(start.ManhattanDistance(relativeToAbsolute(new Point(W - 1, H - 1), topIndex + new Point(-dx, dx))));
+    }
+
+    for (int dx = 0; dx < 4; ++dx)
+    {
+//        Console.WriteLine(start.ManhattanDistance(relativeToAbsolute(new Point(0, 0), rightIndex + new Point(-dx, dx))));
+    }
+
+    for (int dx = 0; dx < 4; ++dx)
+    {
+//        Console.WriteLine(start.ManhattanDistance(relativeToAbsolute(new Point(W - 1, 0), leftIndex + new Point(dx, dx))));
+    }
+
+    long diagonalMultiplier = bottomIndex.Y - 1;
+    long total = innerCountP0 + innerCountP1;
+//    Console.WriteLine($"Part 2 estimate 1 {total}");
+    total += countsByDirection[up];
+    total += countsByDirection[down];
+    total += countsByDirection[left];
+    total += countsByDirection[right];
+    total += countsByDirection[right + up] * diagonalMultiplier;
+    total += countsByDirection[right + down] * diagonalMultiplier;
+    total += countsByDirection[left + up] * diagonalMultiplier;
+    total += countsByDirection[left + down] * diagonalMultiplier;
+//    Console.WriteLine($"Part 2 estimate 2 {total}");
+    total += outerCountsByDirection[left + down] * (diagonalMultiplier + 1);
+    total += outerCountsByDirection[left + up] * (diagonalMultiplier + 1);
+    total += outerCountsByDirection[right + down] * (diagonalMultiplier + 1);
+    total += outerCountsByDirection[right + up] * (diagonalMultiplier + 1);
+    //    Console.WriteLine($"Part 2 estimate 3 {total}");
+    // 1260258050363188 is not right
+    // 1260259609893888 is not right
+    // 630130522302936 is not right
+    Console.WriteLine($"In {moves} steps, {total} locations appear reachable");
+}
+
+//calculate(26501365);
+calculate(6);
+calculate(10);
+calculate(50);
+calculate(100);
+calculate(500);
+calculate(1000);
+calculate(5000);
+
+(HashSet<Point>, HashSet<Point>, long) twoStepsFrom(HashSet<Point> liveStarts, HashSet<Point> saturated, long saturatedExcluded, int step)
 {
     HashSet<Point> current = liveStarts;
     HashSet<Point> next = new HashSet<Point>();
@@ -85,6 +385,7 @@ current.Add(start);
             {
                 if (!saturated.Contains(nextP) && !liveStarts.Contains(nextP))
                 {
+                    recordVisit(nextP, step + i + 1);
                     next.Add(nextP);
                 }
             }
@@ -109,6 +410,12 @@ Point mapIndex(Point p)
     return new Point(xResult, yResult);
 }
 
+Point relativeToAbsolute(Point posInMap, Point mapIndex)
+{
+    return posInMap + mapIndex * H;
+}
+
+/*
 List<Point> mapsToCheck = dirs.ToList();
 mapsToCheck.Add(new Point(0, 0));
 mapsToCheck.Add(up + left);
@@ -143,18 +450,19 @@ while (visited.Count != toVisitCount)
 foreach (var g in distDiff.GroupBy(kv => kv.Value))
 {
     Console.WriteLine($"Distance difference {g.Key}: {g.Count()}");
-}
+}*/
 
-HashSet<Point> saturated = new HashSet<Point>();
+/*HashSet<Point> saturated = new HashSet<Point>();
 long saturatedExcluded = 0;
-/*
+
 for (int i = 0; i < 1000; i += 2)
 {
     (current, saturated, saturatedExcluded) = twoStepsFrom(current, saturated, saturatedExcluded);
 }
-*/
+
 
 Console.WriteLine($"Part 2: {current.LongCount() + saturated.LongCount() + saturatedExcluded}");
+*/
 
 public record Point(int X, int Y)
 {
@@ -163,5 +471,14 @@ public record Point(int X, int Y)
     public int ManhattanDistance(Point other)
     {
         return Math.Abs(X - other.X) + Math.Abs(Y - other.Y);
+    }
+
+    public static Point operator *(Point a, int b) => new Point(a.X * b, a.Y * b);
+
+    public static Point operator-(Point a, Point b) => new Point(a.X - b.X, a.Y - b.Y);
+
+    public Point clamp(int d)
+    {
+        return new Point(Math.Min(Math.Max(-d, X), d), Math.Min(Math.Max(-d, Y), d));
     }
 }
