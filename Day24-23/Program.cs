@@ -1,6 +1,6 @@
 ﻿using Common;
 using System.Diagnostics;
-using System.Runtime.Intrinsics.X86;
+using System.Numerics;
 
 string fileName = "../../../input.txt";
 decimal minCoord = 200000000000000;
@@ -108,8 +108,8 @@ long findVelocityForDimension(IEnumerable<Progression1D> progressions)
 
                 foreach (long divisor in AllDivisors(gcd))
                 {
-                    currentPossibleSteps.Add(divisor - g.Key);
-                    currentPossibleSteps.Add(-divisor - g.Key);
+                    currentPossibleSteps.Add(divisor + g.Key);
+                    currentPossibleSteps.Add(-divisor + g.Key);
                 }
                 //Console.WriteLine($"Current possibles count {currentPossibleSteps.Count}");
                 //Console.WriteLine($"Previous possibles count {possibleSteps.Count}");
@@ -131,9 +131,9 @@ long findVelocityForDimension(IEnumerable<Progression1D> progressions)
     return possibleSteps.Single();
 }
 
-long dx = -findVelocityForDimension(paths.Select(p => p.XProgression()));
-long dy = -findVelocityForDimension(paths.Select(p => p.YProgression()));
-long dz = -findVelocityForDimension(paths.Select(p => p.ZProgression()));
+long dx = findVelocityForDimension(paths.Select(p => p.XProgression()));
+long dy = findVelocityForDimension(paths.Select(p => p.YProgression()));
+long dz = findVelocityForDimension(paths.Select(p => p.ZProgression()));
 
 //long dx = -3;
 //long dy = 1;
@@ -143,13 +143,13 @@ Console.WriteLine($"It would appear the valid X velocity is {dx}");
 Console.WriteLine($"It would appear the valid Y velocity is {dy}");
 Console.WriteLine($"It would appear the valid Z velocity is {dz}");
 
-long prevmod = 0;
-long prevremainder = 0;
+BigInteger prevmod = 0;
+BigInteger prevremainder = 0;
 
 for (int i = 0; i < paths.Length; i++)
 {
-    long remainder = (long)paths[i].Start.X;
-    long mod = Math.Abs((long)paths[i].Velocity.X - dx);
+    BigInteger remainder = (long)paths[i].Start.X;
+    BigInteger mod = Math.Abs((long)paths[i].Velocity.X - dx);
 
     if (mod == 0)
     {
@@ -158,7 +158,7 @@ for (int i = 0; i < paths.Length; i++)
 
     remainder = remainder % mod;
 
-    Console.WriteLine($"Looking at path {i}, We think x == {remainder % mod} mod {mod}");
+//    Console.WriteLine($"Looking at path {i}, We think x == {remainder % mod} mod {mod}");
     if (prevmod == 0)
     {
         prevmod = mod;
@@ -166,14 +166,14 @@ for (int i = 0; i < paths.Length; i++)
     }
     else
     {
-        long gcd = EuclidGCD(prevmod, mod);
+        BigInteger gcd = BigInteger.GreatestCommonDivisor(prevmod, mod);
         if (gcd != 1)
         {
-            Console.WriteLine($"GCD of {prevmod} and {mod} is {gcd}, ignoring");
+//            Console.WriteLine($"GCD of {prevmod} and {mod} is {gcd}, ignoring");
             continue;
         }
 
-        long candidateRemainder = prevremainder;
+        BigInteger candidateRemainder = prevremainder;
         while (candidateRemainder % mod != remainder % mod)
         {
             candidateRemainder += prevmod;
@@ -183,14 +183,16 @@ for (int i = 0; i < paths.Length; i++)
         Console.WriteLine($"We now think x == {prevremainder} mod {prevmod}");
     }
 }
+BigInteger total = prevremainder;
+
 
 prevmod = 0;
 prevremainder = 0;
 
 for (int i = 0; i < paths.Length; i++)
 {
-    long remainder = (long)paths[i].Start.Y;
-    long mod = Math.Abs((long)paths[i].Velocity.Y - dy);
+    BigInteger remainder = (long)paths[i].Start.Y;
+    BigInteger mod = Math.Abs((long)paths[i].Velocity.Y - dy);
 
     if (mod == 0)
     {
@@ -199,7 +201,7 @@ for (int i = 0; i < paths.Length; i++)
 
     remainder = remainder % mod;
 
-    Console.WriteLine($"Looking at path {i}, We think y == {remainder % mod} mod {mod}");
+//    Console.WriteLine($"Looking at path {i}, We think y == {remainder % mod} mod {mod}");
     if (prevmod == 0)
     {
         prevmod = mod;
@@ -207,14 +209,14 @@ for (int i = 0; i < paths.Length; i++)
     }
     else
     {
-        long gcd = EuclidGCD(prevmod, mod);
+        BigInteger gcd = BigInteger.GreatestCommonDivisor(prevmod, mod);
         if (gcd != 1)
         {
-            Console.WriteLine($"GCD of {prevmod} and {mod} is {gcd}, ignoring");
+//            Console.WriteLine($"GCD of {prevmod} and {mod} is {gcd}, ignoring");
             continue;
         }
 
-        long candidateRemainder = prevremainder;
+        BigInteger candidateRemainder = prevremainder;
         while (candidateRemainder % mod != remainder % mod)
         {
             candidateRemainder += prevmod;
@@ -224,14 +226,16 @@ for (int i = 0; i < paths.Length; i++)
         Console.WriteLine($"We now think y == {prevremainder} mod {prevmod}");
     }
 }
+total += prevremainder;
+
 
 prevmod = 0;
 prevremainder = 0;
 
 for (int i = 0; i < paths.Length; i++)
 {
-    long remainder = (long)paths[i].Start.Z;
-    long mod = Math.Abs((long)paths[i].Velocity.Z - dz);
+    BigInteger remainder = (long)paths[i].Start.Z;
+    BigInteger mod = Math.Abs((long)paths[i].Velocity.Z - dz);
 
     if (mod == 0)
     {
@@ -240,7 +244,7 @@ for (int i = 0; i < paths.Length; i++)
 
     remainder = remainder % mod;
 
-    Console.WriteLine($"Looking at path {i}, We think z == {remainder % mod} mod {mod}");
+ //   Console.WriteLine($"Looking at path {i}, We think z == {remainder % mod} mod {mod}");
     if (prevmod == 0)
     {
         prevmod = mod;
@@ -248,14 +252,14 @@ for (int i = 0; i < paths.Length; i++)
     }
     else
     {
-        long gcd = EuclidGCD(prevmod, mod);
+        BigInteger gcd = BigInteger.GreatestCommonDivisor(prevmod, mod);
         if (gcd != 1)
         {
-            Console.WriteLine($"GCD of {prevmod} and {mod} is {gcd}, ignoring");
+//            Console.WriteLine($"GCD of {prevmod} and {mod} is {gcd}, ignoring");
             continue;
         }
 
-        long candidateRemainder = prevremainder;
+        BigInteger candidateRemainder = prevremainder;
         while (candidateRemainder % mod != remainder % mod)
         {
             candidateRemainder += prevmod;
@@ -265,222 +269,9 @@ for (int i = 0; i < paths.Length; i++)
         Console.WriteLine($"We now think z == {prevremainder} mod {prevmod}");
     }
 }
+total += prevremainder;
 
-Console.WriteLine("===========================================");
-
-long distx0 = (long)paths[1].Start.X - (long)paths[0].Start.X;
-long disty0 = (long)paths[1].Start.Y - (long)paths[0].Start.Y;
-long distz0 = (long)paths[1].Start.Z - (long)paths[0].Start.Z;
-
-// delta of first particles current position at the time when the stone hits the second particle, per timestep that particle 1 was hit before particle 2
-long deltax0 = -dx + (long)paths[0].Velocity.X;
-long deltay0 = -dy + (long)paths[0].Velocity.Y;
-long deltaz0 = -dz + (long)paths[0].Velocity.Z;
-
-// Arbitrarily look at projection to the planes whose normal is (1, -1, -1)
-long proj1Stone = dx - dy - dz;
-Console.WriteLine($"Projection of the stone movement = {proj1Stone}");
-
-long proj1P0 = (long)paths[0].Velocity.X - (long)paths[0].Velocity.Y - (long)paths[0].Velocity.Z;
-long proj1P1 = (long)paths[1].Velocity.X - (long)paths[1].Velocity.Y - (long)paths[1].Velocity.Z;
-long proj1P01 = proj1P1 - proj1P0;
-
-while (proj1P0 < 0)
-{
-    proj1P0 += proj1Stone;
-}
-
-while (proj1P1 < 0)
-{
-    proj1P1 += proj1Stone;
-}
-
-while (proj1P01 < 0)
-{
-    proj1P01 += proj1Stone;
-}
-
-Console.WriteLine(proj1Stone);
-Console.WriteLine(proj1P0);
-Console.WriteLine(proj1P1);
-Console.WriteLine(proj1P01);
-
-long distanceProj1 = distx0 - disty0 - distz0;
-Console.WriteLine($"The raw distance projection = {distanceProj1}");
-long mult = distanceProj1 / proj1Stone;
-distanceProj1 -= mult * proj1Stone;
-while (distanceProj1 < 0)
-{
-    distanceProj1 += proj1Stone;
-}
-distanceProj1 %= proj1Stone;
-Console.WriteLine($"Projection of the distance between 1st and second, modulo stone projection = {distanceProj1}");
-
-
-for (int i = 1; i <= proj1Stone * 4; i++)
-{
-    if ((i * proj1P1) % proj1Stone == distanceProj1)
-    {
-        Console.WriteLine("Not sure of significance :) ");
-        Console.WriteLine(i);
-    }
-}
-
-Console.WriteLine("===========================================");
-Console.WriteLine("Another projection");
-Console.WriteLine("===========================================");
-
-// Arbitrarily look at projection to the planes whose normal is (1, 1, -1)
-long proj2Stone = dx + dy - dz;
-Console.WriteLine($"Projection of the stone movement = {proj2Stone}");
-
-long proj2P0 = (long)paths[0].Velocity.X + (long)paths[0].Velocity.Y - (long)paths[0].Velocity.Z;
-long proj2P1 = (long)paths[1].Velocity.X + (long)paths[1].Velocity.Y - (long)paths[1].Velocity.Z;
-long proj2P01 = proj2P1 - proj2P0;
-
-while (proj2P0 < 0)
-{
-    proj2P0 += proj2Stone;
-}
-
-while (proj2P1 < 0)
-{
-    proj2P1 += proj2Stone;
-}
-
-while (proj1P01 < 0)
-{
-    proj1P01 += proj1Stone;
-}
-
-Console.WriteLine(proj2Stone);
-Console.WriteLine(proj2P0);
-Console.WriteLine(proj2P1);
-Console.WriteLine(proj2P01);
-
-long distanceProj2 = distx0 + disty0 - distz0;
-Console.WriteLine($"The raw distance projection = {distanceProj2}");
-mult = distanceProj2 / proj2Stone;
-distanceProj2 -= mult * proj2Stone;
-while (distanceProj2 < 0)
-{
-    distanceProj2 += proj2Stone;
-}
-distanceProj2 %= proj2Stone;
-Console.WriteLine($"Projection of the distance between 1st and second, modulo stone projection = {distanceProj2}");
-
-
-for (int i = 1; i <= proj2Stone * 4; i++)
-{
-    if ((i * proj1P1) % proj2Stone == distanceProj2)
-    {
-        Console.WriteLine("Not sure of significance :) ");
-        Console.WriteLine(i);
-    }
-}
-
-
-Console.WriteLine("===========================================");
-Console.WriteLine("Another projection");
-Console.WriteLine("===========================================");
-
-// Arbitrarily look at projection to the planes whose normal is (1, 0, 0)
-long proj3Stone = dx;
-Console.WriteLine($"Projection of the stone movement = {proj3Stone}");
-
-long proj3P0 = (long)paths[0].Velocity.X;
-long proj3P1 = (long)paths[1].Velocity.X;
-long proj3P01 = proj3P1 - proj3P0;
-
-while (proj3P0 < 0)
-{
-    proj3P0 += proj3Stone;
-}
-
-while (proj3P1 < 0)
-{
-    proj3P1 += proj3Stone;
-}
-
-while (proj3P01 < 0)
-{
-    proj3P01 += proj3Stone;
-}
-
-Console.WriteLine(proj3Stone);
-Console.WriteLine(proj3P0);
-Console.WriteLine(proj3P1);
-Console.WriteLine(proj3P01);
-
-long distanceProj3 = distx0;
-Console.WriteLine($"The raw distance projection = {distanceProj3}");
-mult = distanceProj3 / proj3Stone;
-distanceProj3 -= mult * proj3Stone;
-while (distanceProj3 < 0)
-{
-    distanceProj3 += proj3Stone;
-}
-distanceProj3 %= proj3Stone;
-Console.WriteLine($"Projection of the distance between 1st and second, modulo stone projection = {distanceProj3}");
-
-
-for (int i = 1; i <= proj3Stone * 4; i++)
-{
-    if ((i * proj3P1) % proj3Stone == distanceProj3)
-    {
-        Console.WriteLine("Not sure of significance :) ");
-        Console.WriteLine(i);
-    }
-}
-
-/*
-int mostHits = 0;
-int searchSize = 300;
-int maxMisses = 5;
-for (int dx = -searchSize; dx <= searchSize; dx++)
-{
-    for (int dy = -searchSize; dy <= searchSize; dy++)
-    {
-        for (int dz = -searchSize; dz <= searchSize; dz++)
-        {
-*/
-int hitCount = 0;
-            Point vel = new Point(dx, dy, dz);
-            //if (vel.X == 0 && vel.Y == 0 && vel.Z == 0)
-            //{
-            //    continue;
-            //}
-            Point start = null;
-            int pairIdx = 0;
-            while (start == null)
-            {
-                start = Path.HitTwoParticlesFrom(vel, paths[pairIdx], paths[pairIdx + 1]);
-                pairIdx++;
-            }
-            //if (!start.LooksIntegral())
-            //{
-            //    continue;
-            //}
-            for (int i = 0; i < paths.Length /*&& i - hitCount <= maxMisses*/; i++)
-            {
-                if (paths[i].Hit(start, vel))
-                {
-                    hitCount++;
-                }
-            }
-/*
-            if (hitCount > mostHits)
-            {
-                Console.WriteLine($"Velocity {vel} starting from {start} hits {hitCount} particles");
-                mostHits = hitCount;
-            }
-        }
-    }
-}
-*/
-
-            Console.WriteLine(hitCount);
-
+Console.WriteLine(total);
 
 public record Point(decimal X, decimal Y, decimal Z)
 {
