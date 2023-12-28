@@ -89,7 +89,7 @@ void explore1(Point current, HashSet<Point> visited, int length)
     }
 }
 
-//explore1(start, new HashSet<Point>(), 0);
+explore1(start, new HashSet<Point>(), 0);
 
 Dictionary<Point, List<(Point, int)>> nextJunctions = new Dictionary<Point, List<(Point, int)>>();
 HashSet<Point> doneDirections = new HashSet<Point>();
