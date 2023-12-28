@@ -1,9 +1,7 @@
 ﻿using Common;
 
-var fileName = "../../../input.txt";
-// var fileName = "../../../testInput.txt";
-
-var lines = File.ReadAllLines(fileName);
+var lines = new AoCUtil().GetInput(2023, 23);
+//var lines = new AoCUtil().GetTestBlock(2023, 23, 0);
 
 Point up = new Point(0, -1);
 Point down = new Point(0, 1);
