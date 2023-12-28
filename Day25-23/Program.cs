@@ -1,9 +1,7 @@
 ﻿using Common;
 
-string fileName = "../../../input.txt";
-//string fileName = "../../../testInput.txt";
-
-string[] lines = File.ReadAllLines(fileName);
+string[] lines = new AoCUtil().GetInput(2023, 25);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 25, 1);
 
 ConcreteGraph<string> graph = new ConcreteGraph<string>();
 

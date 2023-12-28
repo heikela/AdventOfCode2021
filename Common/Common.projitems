@@ -12,5 +12,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DynamicProgramming.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AoCUtil.cs" />
   </ItemGroup>
 </Project>
