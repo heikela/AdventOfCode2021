@@ -26,8 +26,9 @@ for (int i = 0; i < paths.Length; i++)
     }
 }
 
-/*
+
 Console.WriteLine(interestingCrossings);
+/*
 
 Console.WriteLine(Path.HitTwoParticlesFrom(new Point(-3, 1, 2), paths[0], paths[1]));
 Console.WriteLine(Path.HitTwoParticlesFrom(new Point(-3, 1, 2), paths[1], paths[2]));
