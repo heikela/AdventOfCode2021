@@ -2,15 +2,13 @@
 using System.Diagnostics;
 using System.Numerics;
 
-string fileName = "../../../input.txt";
 decimal minCoord = 200000000000000;
 decimal maxCoord = 400000000000000;
+string[] lines = new AoCUtil().GetInput(2023, 24);
 
-//string fileName = "../../../testInput.txt";
+//string[] lines = new AoCUtil().GetTestBlock(2023, 24, 0);
 //decimal minCoord = 7;
 //decimal maxCoord = 27;
-
-string[] lines = File.ReadAllLines(fileName);
 
 Path[] paths = lines.Select(Path.Parse).ToArray();
 
