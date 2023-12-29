@@ -1,9 +1,9 @@
 ﻿using Common;
 
-//string fileName = "../../../testInput.txt";
-string fileName = "../../../input.txt";
+string[] lines = new AoCUtil().GetInput(2023, 8);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 8, 0);
 
-var sections = File.ReadAllLines(fileName).Paragraphs().ToList();
+var sections = lines.Paragraphs().ToList();
 
 string instructions = sections[0].First();
 

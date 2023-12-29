@@ -1,10 +1,8 @@
 ﻿using Common;
 using Priority_Queue;
 
-string fileName = "../../../input.txt";
-//string fileName = "../../../testInput.txt";
-
-string[] lines = File.ReadAllLines(fileName);
+string[] lines = new AoCUtil().GetInput(2023, 17);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 17, 0);
 
 Dictionary<Point, int> heatLoss = new Dictionary<Point, int>();
 

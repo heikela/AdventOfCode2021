@@ -8,4 +8,5 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <Import Project="..\Common\Common.projitems" Label="Shared" Condition="Exists('..\Common\Common.projitems')" />
 </Project>

@@ -1,9 +1,7 @@
 ﻿using Common;
 
-//string fileName = "../../../testInput.txt";
-string fileName = "../../../input.txt";
-
-string[] lines = File.ReadAllLines(fileName).ToArray();
+string[] lines = new AoCUtil().GetInput(2023, 9);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 9, 0);
 
 IEnumerable<int> parseLine(string line)
 {

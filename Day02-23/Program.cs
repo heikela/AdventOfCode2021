@@ -1,7 +1,7 @@
 ﻿using Common;
 
-//string[] lines = File.ReadAllLines("../../../testInput.txt").ToArray();
-string[] lines = File.ReadAllLines("../../../input.txt").ToArray();
+string[] lines = new AoCUtil().GetInput(2023, 2);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 2, 0);
 
 static Dictionary<string, int> AnalyseLine(string line)
 {

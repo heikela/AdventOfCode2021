@@ -18,6 +18,7 @@ launchSettings.json
 input.txt
 testInput.txt
 .sessioncookie
+decompile.txt
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

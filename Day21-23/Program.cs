@@ -1,10 +1,8 @@
 ﻿using Common;
 using System.Diagnostics;
 
-string fileName = "../../../input.txt";
-//string fileName = "../../../testInput.txt";
-
-var lines = File.ReadAllLines(fileName);
+string[] lines = new AoCUtil().GetInput(2023, 21);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 21, 0);
 
 Dictionary<Point, char> map = new Dictionary<Point, char>();
 

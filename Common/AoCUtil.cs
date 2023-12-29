@@ -48,11 +48,9 @@ namespace Common
                 string html = download.Result;
                 Regex codeblockRE = new Regex("<pre><code>(.*?)</code></pre>", RegexOptions.Singleline);
                 MatchCollection matches = codeblockRE.Matches(html);
-                File.WriteAllText(fileName, matches[block].Groups[1].Value);
+                File.WriteAllText(fileName, WebUtility.HtmlDecode(matches[block].Groups[1].Value));
             }
             return File.ReadAllLines(fileName);
         }
-
-
     }
 }

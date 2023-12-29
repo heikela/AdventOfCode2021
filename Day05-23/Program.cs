@@ -1,9 +1,9 @@
 ﻿using Common;
 
-//string fileName = "../../../testInput.txt";
-string fileName = "../../../input.txt";
+string[] lines = new AoCUtil().GetInput(2023, 5);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 5, 0);
 
-var sections = File.ReadAllLines(fileName).Paragraphs();
+var sections = lines.Paragraphs();
 
 List<long> seeds = sections.First().First().Split(':')[1].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToList();
 List<Range> seeds2 = new List<Range>();

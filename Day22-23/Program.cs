@@ -1,12 +1,10 @@
 ﻿using Common;
 
-string fileName = "../../../input.txt";
-//string fileName = "../../../testInput.txt";
+string[] lines = new AoCUtil().GetInput(2023, 22);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 22, 0);
 
 Point down = new Point(0, 0, -1);
 Point up = new Point(0, 0, 1);
-
-var lines = File.ReadAllLines(fileName);
 
 var bricks = lines.Select(line =>
 {

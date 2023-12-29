@@ -1,9 +1,7 @@
 ﻿using Common;
 
-//string fileName = "../../../testInput.txt";
-string fileName = "../../../input.txt";
-
-string[] lines = File.ReadAllLines(fileName);
+string[] lines = new AoCUtil().GetInput(2023, 18);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 18, 0);
 
 Point up = new Point(0, -1);
 Point down = new Point(0, 1);

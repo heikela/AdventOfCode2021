@@ -1,10 +1,9 @@
 ﻿using Common;
 using System.Diagnostics;
 
-//string fileName = "../../../testInput.txt";
-string fileName = "../../../input.txt";
+string[] lines = new AoCUtil().GetInput(2023, 12);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 12, 1);
 
-string[] lines = File.ReadAllLines(fileName).ToArray();
 SpringRecord[] records = lines.Select(SpringRecord.Parse).ToArray();
 var bigRecords = records.Select(r => r.FiveFold());
 

@@ -1,13 +1,8 @@
 ﻿using Common;
 using System.Diagnostics;
 
-//string fileName = "../../../testInput.txt";
-
-string fileName = "../../../input.txt";
-
-//string fileName = "../../../p2test1.txt";
-
-string[] lines = File.ReadAllLines(fileName).ToArray();
+string[] lines = new AoCUtil().GetInput(2023, 10);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 10, 4);
 
 Point left = new Point(-1, 0);
 Point up = new Point(0, -1);

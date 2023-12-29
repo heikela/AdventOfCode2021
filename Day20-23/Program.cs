@@ -7,7 +7,11 @@ Dictionary<string, Module> modules = new Dictionary<string, Module>();
 Dictionary<string, List<string>> reverseConnections = new Dictionary<string, List<string>>();
 Dictionary<string, List<string>> connections = new Dictionary<string, List<string>>();
 
-foreach (var line in File.ReadAllLines(fileName))
+//string[] lines = new AoCUtil().GetInput(2023, 20);
+string[] lines = new AoCUtil().GetTestBlock(2023, 20, 2);
+
+
+foreach (var line in lines)
 {
     string[] parts = line.Split("->", StringSplitOptions.TrimEntries);
     string id = parts[0].Substring(1);

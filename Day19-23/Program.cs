@@ -1,10 +1,9 @@
 ﻿using Common;
 using System.Data;
 
-string fileName = "../../../input.txt";
-//string fileName = "../../../testInput.txt";
-
-var sections = File.ReadAllLines(fileName).Paragraphs();
+string[] lines = new AoCUtil().GetInput(2023, 19);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 19, 0);
+var sections = lines.Paragraphs();
 
 var parts = sections.Skip(1).First().Select(line =>
 {

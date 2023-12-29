@@ -1,9 +1,9 @@
 ﻿using Common;
 
-var fileName = "../../../input.txt";
-//var fileName = "../../../testInput.txt";
+string[] lines = new AoCUtil().GetInput(2023, 13);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 13, 0);
 
-var patterns = File.ReadAllLines(fileName).Paragraphs();
+var patterns = lines.Paragraphs();
 
 Console.WriteLine($"Part 1 : {patterns.Select(Pattern.Parse).Sum(p => p.ReflectionValue().Single())}");
 Console.WriteLine($"Part 2 : {patterns.Select(Pattern.Parse).Sum(p => p.FixedReflectionValue())}");

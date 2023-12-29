@@ -1,7 +1,9 @@
-﻿var fileName = "../../../input.txt";
-//var fileName = "../../../testInput.txt";
+﻿using Common;
 
-string line = File.ReadLines(fileName).First();
+string[] lines = new AoCUtil().GetInput(2023, 15);
+//string[] lines = new AoCUtil().GetTestBlock(2023, 15, 0);
+
+string line = lines.First();
 
 int hash(string s)
 {
