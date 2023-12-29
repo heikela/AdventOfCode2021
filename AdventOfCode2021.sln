@@ -133,6 +133,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day24-23", "Day24-23\Day24-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day25-23", "Day25-23\Day25-23.csproj", "{216DA0B0-6E70-428A-843D-7C5F6A44D3DA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4E4E0681-38FF-4903-AD81-C27D6FCCA9BC}"
+	ProjectSection(SolutionItems) = preProject
+		Improvements.md = Improvements.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
