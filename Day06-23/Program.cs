@@ -1,7 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
-
-List<long> durations = new List<long>() { 47, 84, 74, 67 };
+﻿List<long> durations = new List<long>() { 47, 84, 74, 67 };
 List<long> records = new List<long>() { 207, 1394, 1209, 1014 };
 
 bool beatsRecord(long charge, long duration, long record)
